@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What2Cook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4">
+
+<div class="max-w-xl mx-auto bg-white shadow-xl rounded-lg p-6">
+    <h1 class="text-2xl font-bold text-center mb-4">🍽️ What2Cook</h1>
+    <p class="mb-2">Enter ingredients you have (comma-separated):</p>
+    <textarea id="ingredients" class="w-full border rounded p-2" rows="3" placeholder="e.g. chicken, pasta, tomatoes"></textarea>
+    <button id="searchBtn" class="mt-4 w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">Find Recipes</button>
+
+    <div id="recipes" class="mt-6 space-y-4"></div>
+</div>
+
+<script>
+const searchBtn = document.getElementById('searchBtn');
+const recipesDiv = document.getElementById('recipes');
+
+searchBtn.addEventListener('click', () => {
+    const ingredients = document.getElementById('ingredients').value;
+
+    if (!ingredients) {
+        alert('Please enter at least one ingredient!');
+        return;
+    }
+
+    recipesDiv.innerHTML = '<p class="text-center">Loading recipes...</p>';
+
+    fetch(`https://api.edamam.com/search?q=${encodeURIComponent(ingredients)}&app_id=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=5`)
+        .then(response => response.json())
+        .then(data => {
+            recipesDiv.innerHTML = '';
+            if (data.hits.length === 0) {
+                recipesDiv.innerHTML = '<p>No recipes found. Try different ingredients!</p>';
+            } else {
+                data.hits.forEach(hit => {
+                    const recipe = hit.recipe;
+                    const recipeCard = `
+                        <div class="border rounded p-4 bg-gray-50">
+                            <h3 class="font-semibold">${recipe.label}</h3>
+                            <img class="mt-2 rounded" src="${recipe.image}" alt="Recipe Image">
+                            <p class="mt-2"><strong>Ingredients:</strong> ${recipe.ingredientLines.join(', ')}</p>
+                            <a class="inline-block mt-2 text-blue-500 hover:underline" href="${recipe.url}" target="_blank">View Recipe</a>
+                        </div>`;
+                    recipesDiv.innerHTML += recipeCard;
+                });
+            }
+        })
+        .catch(error => {
+            recipesDiv.innerHTML = '<p>Error loading recipes. Please try again later.</p>';
+            console.error(error);
+        });
+});
+</script>
+
+</body>
+</html>
+<script>
+const searchBtn = document.getElementById('searchBtn');
+const recipesDiv = document.getElementById('recipes');
+
+searchBtn.addEventListener('click', () => {
+    const ingredients = document.getElementById('ingredients').value;
+
+    if (!ingredients) {
+        alert('Please enter at least one ingredient!');
+        return;
+    }
+
+    recipesDiv.innerHTML = '<p class="text-center">Creating AI-generated recipe...</p>';
+
+    fetch('http://localhost:5000/generate_recipe', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ingredients})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.error) {
+            recipesDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+        } else {
+            recipesDiv.innerHTML = `<div class="p-4 bg-gray-50 rounded shadow">${data.recipe.replace(/\\n/g, '<br>')}</div>`;
+        }
+    })
+    .catch(err => {
+        recipesDiv.innerHTML = '<p>Error generating recipe. Try again later.</p>';
+        console.error(err);
+    });
+});
+</script>
