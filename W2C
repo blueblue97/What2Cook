@@ -60,3 +60,36 @@ searchBtn.addEventListener('click', () => {
 
 </body>
 </html>
+<script>
+const searchBtn = document.getElementById('searchBtn');
+const recipesDiv = document.getElementById('recipes');
+
+searchBtn.addEventListener('click', () => {
+    const ingredients = document.getElementById('ingredients').value;
+
+    if (!ingredients) {
+        alert('Please enter at least one ingredient!');
+        return;
+    }
+
+    recipesDiv.innerHTML = '<p class="text-center">Creating AI-generated recipe...</p>';
+
+    fetch('http://localhost:5000/generate_recipe', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ingredients})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.error) {
+            recipesDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+        } else {
+            recipesDiv.innerHTML = `<div class="p-4 bg-gray-50 rounded shadow">${data.recipe.replace(/\\n/g, '<br>')}</div>`;
+        }
+    })
+    .catch(err => {
+        recipesDiv.innerHTML = '<p>Error generating recipe. Try again later.</p>';
+        console.error(err);
+    });
+});
+</script>
