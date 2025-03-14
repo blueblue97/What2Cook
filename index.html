@@ -31,7 +31,7 @@ searchBtn.addEventListener('click', () => {
 
     recipesDiv.innerHTML = '<p class="text-center">Creating your recipe...</p>';
 
-    fetch('https://your-backend-url.onrender.com/generate_recipe', {
+    fetch('https://what2cook-backend.onrender.com/generate_recipe', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ingredients})
