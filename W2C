@@ -31,7 +31,7 @@ searchBtn.addEventListener('click', () => {
 
     recipesDiv.innerHTML = '<p class="text-center">Loading recipes...</p>';
 
-    fetch(`https://api.edamam.com/search?q=${encodeURIComponent(ingredients)}&app_id=753f6725&app_key=6a5a4056725a1fad43fe77d86c5888fd&to=5`)
+    fetch(`https://api.edamam.com/search?q=${encodeURIComponent(ingredients)}&app_id=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=5`)
         .then(response => response.json())
         .then(data => {
             recipesDiv.innerHTML = '';
