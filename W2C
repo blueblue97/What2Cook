@@ -95,32 +95,20 @@ const savedRecipesTab = document.getElementById('savedRecipesTab');
 const imageUploadTab = document.getElementById('imageUploadTab');
 const savedRecipesSection = document.getElementById('savedRecipesSection');
 const imageUploadSection = document.getElementById('imageUploadSection');
-const favoritesList = document.getElementById('favoritesList');
-let savedRecipes = JSON.parse(localStorage.getItem('savedRecipes')) || [];
-
-// Update Saved Recipes UI
-function updateSavedRecipes() {
-    favoritesList.innerHTML = savedRecipes.length === 0
-        ? "<p class='text-gray-600'>No saved recipes yet.</p>"
-        : savedRecipes.map((recipe, index) => `
-            <div class="p-3 border rounded bg-gray-50">
-                <p>${recipe}</p>
-                <button onclick="removeRecipe(${index})" class="mt-2 text-red-500 hover:underline">Remove</button>
-            </div>`).join('');
-}
-
-// Remove Recipe Function
-function removeRecipe(index) {
-    savedRecipes.splice(index, 1);
-    localStorage.setItem('savedRecipes', JSON.stringify(savedRecipes));
-    updateSavedRecipes();
-}
 
 // Tab Switching
-savedRecipesTab.addEventListener('click', updateSavedRecipes);
+savedRecipesTab.addEventListener('click', () => {
+    savedRecipesSection.classList.remove('hidden');
+    imageUploadSection.classList.add('hidden');
+    savedRecipesTab.classList.add('border-b-2', 'border-green-500');
+    imageUploadTab.classList.remove('border-b-2', 'border-green-500');
+});
+
 imageUploadTab.addEventListener('click', () => {
     savedRecipesSection.classList.add('hidden');
     imageUploadSection.classList.remove('hidden');
+    imageUploadTab.classList.add('border-b-2', 'border-green-500');
+    savedRecipesTab.classList.remove('border-b-2', 'border-green-500');
 });
 
 // Image Preview Handler
@@ -136,15 +124,43 @@ imageUpload.addEventListener('change', function () {
     }
 });
 
-// Ensure Save Recipe button works properly
-document.addEventListener("click", function(event) {
-    if (event.target.classList.contains("saveRecipeBtn")) {
-        const recipeText = event.target.previousElementSibling.innerText;
-        savedRecipes.push(recipeText);
-        localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes));
-        updateSavedRecipes();
+// Add more ingredient input fields
+addIngredientBtn.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'w-full border rounded p-3 focus:ring-2 focus:ring-green-500';
+    input.placeholder = 'Type an ingredient...';
+    ingredientsContainer.appendChild(input);
+});
+
+searchBtn.addEventListener('click', () => {
+    const ingredientInputs = document.querySelectorAll('#ingredients-container input');
+    const ingredients = Array.from(ingredientInputs).map(input => input.value.trim()).filter(value => value !== '');
+    
+    if (ingredients.length === 0) {
+        alert('Please enter at least one ingredient!');
+        return;
     }
+
+    loadingSpinner.classList.remove("hidden");
+    recipesDiv.innerHTML = '';
+
+    fetch('https://what2cook-backend.onrender.com/generate_recipe', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ ingredients })
+    })
+    .then(res => res.json())
+    .then(data => {
+        loadingSpinner.classList.add("hidden");
+        if (data.error) {
+            recipesDiv.innerHTML = `<p class="text-red-500">${data.error}</p>`;
+        } else {
+            recipesDiv.innerHTML = `<div class="p-4 bg-gray-50 rounded shadow">${data.recipe.replace(/\n/g, '<br>')}</div>`;
+        }
+    });
 });
 </script>
+
 </body>
 </html>
