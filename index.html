@@ -26,10 +26,12 @@
     <div id="recipes" class="mt-6 space-y-4"></div>
 </div>
 
-<!-- Favorite Recipes Section -->
-<div class="max-w-xl mx-auto bg-white shadow-xl rounded-lg p-6 mt-6">
-    <h2 class="text-lg font-semibold text-gray-800">Saved Recipes</h2>
-    <ul id="favoritesList" class="list-disc ml-6 text-gray-600"></ul>
+<!-- Saved Recipes Section (Dropdown) -->
+<div class="max-w-xl mx-auto bg-white shadow-xl rounded-lg p-4 mt-6">
+    <button id="toggleFavorites" class="w-full text-left font-semibold text-gray-800 flex justify-between">
+        Saved Recipes <span id="arrow">▼</span>
+    </button>
+    <ul id="favoritesList" class="list-disc ml-6 text-gray-600 mt-2 hidden"></ul>
 </div>
 
 <script>
@@ -37,6 +39,16 @@ const searchBtn = document.getElementById('searchBtn');
 const recipesDiv = document.getElementById('recipes');
 const favoritesList = document.getElementById('favoritesList');
 const loadingSpinner = document.getElementById('loadingSpinner');
+const toggleFavorites = document.getElementById('toggleFavorites');
+const arrow = document.getElementById('arrow');
+
+// Toggle saved recipes visibility
+let isFavoritesVisible = false;
+toggleFavorites.addEventListener('click', () => {
+    isFavoritesVisible = !isFavoritesVisible;
+    favoritesList.classList.toggle('hidden');
+    arrow.textContent = isFavoritesVisible ? '▲' : '▼';
+});
 
 // Load saved recipes from local storage
 function loadFavorites() {
@@ -50,8 +62,8 @@ function loadFavorites() {
 
     favorites.forEach((recipe, index) => {
         const li = document.createElement('li');
-        li.innerHTML = `<p class="text-gray-600">${recipe} 
-            <button class="ml-2 text-red-500 hover:text-red-700" onclick="removeFavorite(${index})">❌</button></p>`;
+        li.innerHTML = `<button class="text-blue-500 hover:underline" onclick="alert('${recipe.replace(/'/g, '\'')}')">${recipe.substring(0, 30)}...</button>
+            <button class="ml-2 text-red-500 hover:text-red-700" onclick="removeFavorite(${index})">❌</button>`;
         favoritesList.appendChild(li);
     });
 }
@@ -99,7 +111,7 @@ searchBtn.addEventListener('click', () => {
         } else {
             recipesDiv.innerHTML = `
                 <div class="p-4 bg-gray-50 rounded shadow">
-                    <h3 class="font-semibold text-lg text-gray-800">Your AI-Generated Recipe</h3>
+                    <h3 class="font-semibold text-lg text-gray-800">Recipe</h3>
                     <p class="text-gray-600 mt-2">${data.recipe.replace(/\n/g, '<br>')}</p>
                     <button class="mt-2 bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
                         onclick="saveFavorite('${data.recipe.replace(/\n/g, ' ')}')">
