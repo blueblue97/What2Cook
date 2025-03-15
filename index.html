@@ -9,10 +9,19 @@
 <body class="bg-gray-100 p-4">
 
 <div class="max-w-xl mx-auto bg-white shadow-xl rounded-lg p-6">
-    <h1 class="text-2xl font-bold text-center mb-4">🍽️ What2Cook</h1>
-    <p class="mb-2">Enter ingredients you have (comma-separated):</p>
+    <h1 class="text-2xl font-bold text-center mb-4 text-gray-800">🍽️ What2Cook</h1>
+    <p class="mb-2 text-gray-600 text-center">Enter ingredients you have (comma-separated):</p>
+    
     <textarea id="ingredients" class="w-full border rounded p-2" rows="3" placeholder="e.g. chicken, pasta, tomatoes"></textarea>
-    <button id="searchBtn" class="mt-4 w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">Find Recipe</button>
+
+    <button id="searchBtn" class="mt-4 w-full bg-green-500 text-white p-3 rounded hover:bg-green-600 transition">
+        Find Recipe
+    </button>
+
+    <div id="loadingSpinner" class="hidden text-center mt-4">
+        <p class="text-gray-600">Generating your recipe...</p>
+        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500 mx-auto"></div>
+    </div>
 
     <div id="recipes" class="mt-6 space-y-4"></div>
 </div>
@@ -20,6 +29,7 @@
 <script>
 const searchBtn = document.getElementById('searchBtn');
 const recipesDiv = document.getElementById('recipes');
+const loadingSpinner = document.getElementById('loadingSpinner');
 
 searchBtn.addEventListener('click', () => {
     const ingredients = document.getElementById('ingredients').value;
@@ -29,7 +39,9 @@ searchBtn.addEventListener('click', () => {
         return;
     }
 
-    recipesDiv.innerHTML = '<p class="text-center">Creating your recipe...</p>';
+    // Show loading spinner
+    loadingSpinner.classList.remove("hidden");
+    recipesDiv.innerHTML = '';
 
     fetch('https://what2cook-backend.onrender.com/generate_recipe', {
         method: 'POST',
@@ -38,14 +50,22 @@ searchBtn.addEventListener('click', () => {
     })
     .then(res => res.json())
     .then(data => {
+        // Hide loading spinner
+        loadingSpinner.classList.add("hidden");
+
         if (data.error) {
-            recipesDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+            recipesDiv.innerHTML = `<p class="text-red-500">${data.error}</p>`;
         } else {
-            recipesDiv.innerHTML = `<div class="p-4 bg-gray-50 rounded shadow">${data.recipe.replace(/\n/g, '<br>')}</div>`;
+            recipesDiv.innerHTML = `
+                <div class="p-4 bg-gray-50 rounded shadow">
+                    <h3 class="font-semibold text-lg text-gray-800">Your AI-Generated Recipe</h3>
+                    <p class="text-gray-600 mt-2">${data.recipe.replace(/\n/g, '<br>')}</p>
+                </div>`;
         }
     })
     .catch(err => {
-        recipesDiv.innerHTML = '<p>Error generating recipe. Try again later.</p>';
+        loadingSpinner.classList.add("hidden");
+        recipesDiv.innerHTML = '<p class="text-red-500">Error generating recipe. Try again later.</p>';
         console.error(err);
     });
 });
@@ -53,3 +73,4 @@ searchBtn.addEventListener('click', () => {
 
 </body>
 </html>
+
