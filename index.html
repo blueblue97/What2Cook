@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What2Cook</title>
+    <title>What2Cook - Smart Ingredient Detection</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .light-green { background-color: #22a852; }
-        .light-green-hover:hover { background-color: #1b8e46; }
-        .header-font { font-family: 'Poppins', sans-serif; }
+        .dark-green { background-color: #166534; }
+        .dark-green-hover:hover { background-color: #14532d; }
     </style>
 </head>
 <body class="bg-gray-100 p-6 flex flex-col items-center">
 
 <div class="max-w-xl bg-white shadow-xl rounded-lg p-6 w-full">
-    <h1 class="text-3xl font-bold text-center mb-4 text-gray-800 header-font">What2Cook</h1>
+    <h1 class="text-3xl font-bold text-center mb-4 text-gray-800">What2Cook</h1>
     <p class="mb-4 text-gray-600 text-center">Enter the ingredients you have:</p>
 
     <!-- Manual Ingredient Entry -->
     <div id="ingredients-container" class="space-y-2">
         <input type="text" class="w-full border rounded p-3 focus:ring-2 focus:ring-green-500" placeholder="Type an ingredient...">
     </div>
-    <button id="addIngredient" class="mt-3 bg-blue-500 text-white p-2 rounded light-green-hover transition w-full">
+    <button id="addIngredient" class="mt-3 bg-blue-500 text-white p-2 rounded dark-green-hover transition w-full">
         + Add Ingredient
     </button>
 
@@ -48,7 +47,7 @@
         <option value="snacks">Snacks</option>
     </select>
 
-    <button id="searchBtn" class="mt-4 w-full text-white p-3 rounded light-green light-green-hover transition">
+    <button id="searchBtn" class="mt-4 w-full text-white p-3 rounded dark-green dark-green-hover transition">
         Find Recipe
     </button>
 
@@ -69,7 +68,6 @@
     
     <!-- Saved Recipes Section -->
     <div id="savedRecipesSection">
-        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Saved Recipes</h2>
         <div id="favoritesList" class="space-y-4"></div>
     </div>
 
@@ -78,7 +76,7 @@
         <label class="block text-gray-700 font-semibold mb-2">Upload an image of your ingredients:</label>
         <input type="file" id="imageUpload" class="mb-4 border p-2 w-full rounded bg-gray-50">
         <img id="imagePreview" class="hidden w-full rounded-lg shadow-md mb-4"/>
-        <button id="detectIngredients" class="w-full bg-blue-500 text-white p-2 rounded light-green-hover transition">
+        <button id="detectIngredients" class="w-full bg-blue-500 text-white p-2 rounded dark-green-hover transition">
             Detect Ingredients from Image
         </button>
     </div>
@@ -86,27 +84,34 @@
 
 <script>
 const searchBtn = document.getElementById('searchBtn');
+const detectIngredientsBtn = document.getElementById('detectIngredients');
 const recipesDiv = document.getElementById('recipes');
 const loadingSpinner = document.getElementById('loadingSpinner');
 const addIngredientBtn = document.getElementById('addIngredient');
 const ingredientsContainer = document.getElementById('ingredients-container');
-const recipeType = document.getElementById('recipeType');
-const favoritesList = document.getElementById('favoritesList');
 const imageUpload = document.getElementById('imageUpload');
 const imagePreview = document.getElementById('imagePreview');
-const detectIngredientsBtn = document.getElementById('detectIngredients');
-let savedRecipes = [];
+const savedRecipesTab = document.getElementById('savedRecipesTab');
+const imageUploadTab = document.getElementById('imageUploadTab');
+const savedRecipesSection = document.getElementById('savedRecipesSection');
+const imageUploadSection = document.getElementById('imageUploadSection');
 
-// Add more ingredient input fields
-addIngredientBtn.addEventListener('click', () => {
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'w-full border rounded p-3 focus:ring-2 focus:ring-green-500';
-    input.placeholder = 'Type an ingredient...';
-    ingredientsContainer.appendChild(input);
+// Tab Switching
+savedRecipesTab.addEventListener('click', () => {
+    savedRecipesSection.classList.remove('hidden');
+    imageUploadSection.classList.add('hidden');
+    savedRecipesTab.classList.add('border-b-2', 'border-green-500');
+    imageUploadTab.classList.remove('border-b-2', 'border-green-500');
 });
 
-// Image Upload Preview
+imageUploadTab.addEventListener('click', () => {
+    savedRecipesSection.classList.add('hidden');
+    imageUploadSection.classList.remove('hidden');
+    imageUploadTab.classList.add('border-b-2', 'border-green-500');
+    savedRecipesTab.classList.remove('border-b-2', 'border-green-500');
+});
+
+// Image Preview Handler
 imageUpload.addEventListener('change', function () {
     const file = imageUpload.files[0];
     if (file) {
@@ -119,9 +124,41 @@ imageUpload.addEventListener('change', function () {
     }
 });
 
-// Placeholder: Smart Ingredient Recognition (API integration needed)
-detectIngredientsBtn.addEventListener('click', () => {
-    alert('Smart Ingredient Recognition feature will be implemented soon!');
+// Add more ingredient input fields
+addIngredientBtn.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'w-full border rounded p-3 focus:ring-2 focus:ring-green-500';
+    input.placeholder = 'Type an ingredient...';
+    ingredientsContainer.appendChild(input);
+});
+
+searchBtn.addEventListener('click', () => {
+    const ingredientInputs = document.querySelectorAll('#ingredients-container input');
+    const ingredients = Array.from(ingredientInputs).map(input => input.value.trim()).filter(value => value !== '');
+    
+    if (ingredients.length === 0) {
+        alert('Please enter at least one ingredient!');
+        return;
+    }
+
+    loadingSpinner.classList.remove("hidden");
+    recipesDiv.innerHTML = '';
+
+    fetch('https://what2cook-backend.onrender.com/generate_recipe', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ ingredients })
+    })
+    .then(res => res.json())
+    .then(data => {
+        loadingSpinner.classList.add("hidden");
+        if (data.error) {
+            recipesDiv.innerHTML = `<p class="text-red-500">${data.error}</p>`;
+        } else {
+            recipesDiv.innerHTML = `<div class="p-4 bg-gray-50 rounded shadow">${data.recipe.replace(/\n/g, '<br>')}</div>`;
+        }
+    });
 });
 </script>
 
