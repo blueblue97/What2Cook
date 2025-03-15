@@ -5,69 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinanceHub - Smart Budgeting & Expense Tracking</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .primary-blue { background-color: #1e3a8a; }
         .primary-blue-hover:hover { background-color: #1e40af; }
+        .hidden { display: none; }
     </style>
 </head>
 <body class="bg-gray-100 p-6 flex flex-col items-center">
 
-<div class="max-w-xl bg-white shadow-xl rounded-lg p-6 w-full">
-    <h1 class="text-3xl font-bold text-center mb-4 text-gray-800">FinanceHub</h1>
-    <p class="mb-4 text-gray-600 text-center">Track your income and expenses smartly:</p>
+<div class="max-w-xl bg-white shadow-lg rounded-lg p-6 w-full">
+    <h1 class="text-2xl font-bold text-center mb-4 text-gray-800">FinanceHub</h1>
+    <p class="text-gray-600 text-center mb-4">Track your income, expenses, and budget effectively.</p>
 
-    <!-- Income & Expense Entry -->
+    <!-- Finance Entry Form -->
     <div id="finance-container" class="space-y-2">
-        <input type="text" class="w-full border rounded p-3 focus:ring-2 focus:ring-blue-500" placeholder="Income Source...">
-        <input type="number" class="w-full border rounded p-3 focus:ring-2 focus:ring-blue-500" placeholder="Amount ($)...">
+        <input type="text" class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500" placeholder="Description">
+        <input type="number" class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500" placeholder="Amount ($)">
     </div>
-    <button id="addFinance" class="mt-3 bg-blue-500 text-white p-2 rounded primary-blue-hover transition w-full">
+    <button id="addFinance" class="mt-3 bg-blue-500 text-white p-2 rounded primary-blue-hover w-full">
         + Add Entry
     </button>
 
-    <select id="financeCategory" class="w-full border rounded p-3 mt-4 focus:ring-2 focus:ring-blue-500">
-        <option value="budget">Monthly Budget</option>
-        <option value="investments">Investment Portfolio</option>
-        <option value="loans">Loan Calculator</option>
-        <option value="expenses">Expense Breakdown</option>
+    <!-- Finance Options -->
+    <select id="financeCategory" class="w-full border rounded p-2 mt-4 focus:ring-2 focus:ring-blue-500">
+        <option value="budget">Budget Overview</option>
+        <option value="savings">Savings Tracker</option>
+        <option value="debts">Debt Manager</option>
+        <option value="subscriptions">Subscription Tracker</option>
+        <option value="goals">Financial Goals</option>
     </select>
 
-    <button id="calculateBtn" class="mt-4 w-full text-white p-3 rounded primary-blue primary-blue-hover transition">
-        Calculate & Analyze
+    <button id="calculateBtn" class="mt-4 w-full text-white p-2 rounded primary-blue primary-blue-hover">
+        Calculate
     </button>
 
-    <div id="loadingSpinner" class="hidden text-center mt-4">
-        <p class="text-gray-600">Analyzing your finances...</p>
-        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500 mx-auto"></div>
-    </div>
-
-    <div id="results" class="mt-6 space-y-4"></div>
-    
-    <!-- Chart Section -->
-    <canvas id="financeChart" class="mt-6 w-full hidden"></canvas>
+    <div id="results" class="mt-6"></div>
 </div>
 
 <script>
-const calculateBtn = document.getElementById('calculateBtn');
 const addFinanceBtn = document.getElementById('addFinance');
 const financeContainer = document.getElementById('finance-container');
+const calculateBtn = document.getElementById('calculateBtn');
 const resultsDiv = document.getElementById('results');
-const loadingSpinner = document.getElementById('loadingSpinner');
-const financeChart = document.getElementById('financeChart').getContext('2d');
-let chartInstance;
 
-// Add more finance input fields
+// Add more finance entry fields
 addFinanceBtn.addEventListener('click', () => {
     const inputText = document.createElement('input');
     inputText.type = 'text';
-    inputText.className = 'w-full border rounded p-3 focus:ring-2 focus:ring-blue-500';
-    inputText.placeholder = 'Income/Expense Description...';
+    inputText.className = 'w-full border rounded p-2 focus:ring-2 focus:ring-blue-500';
+    inputText.placeholder = 'Description';
 
     const inputNumber = document.createElement('input');
     inputNumber.type = 'number';
-    inputNumber.className = 'w-full border rounded p-3 focus:ring-2 focus:ring-blue-500';
-    inputNumber.placeholder = 'Amount ($)...';
+    inputNumber.className = 'w-full border rounded p-2 focus:ring-2 focus:ring-blue-500';
+    inputNumber.placeholder = 'Amount ($)';
 
     financeContainer.appendChild(inputText);
     financeContainer.appendChild(inputNumber);
@@ -80,7 +71,7 @@ calculateBtn.addEventListener('click', () => {
     for (let i = 0; i < financeInputs.length; i += 2) {
         if (financeInputs[i].value && financeInputs[i+1].value) {
             financeData.push({
-                label: financeInputs[i].value.trim(),
+                description: financeInputs[i].value.trim(),
                 amount: parseFloat(financeInputs[i+1].value.trim())
             });
         }
@@ -91,35 +82,10 @@ calculateBtn.addEventListener('click', () => {
         return;
     }
 
-    loadingSpinner.classList.remove("hidden");
-    resultsDiv.innerHTML = '';
-
-    setTimeout(() => {
-        loadingSpinner.classList.add("hidden");
-        resultsDiv.innerHTML = `<div class="p-4 bg-gray-50 rounded shadow">Analysis complete. Your finances are on track!</div>`;
-
-        if (chartInstance) {
-            chartInstance.destroy();
-        }
-
-        chartInstance = new Chart(financeChart, {
-            type: 'pie',
-            data: {
-                labels: financeData.map(entry => entry.label),
-                datasets: [{
-                    data: financeData.map(entry => entry.amount),
-                    backgroundColor: [
-                        '#1E40AF', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-        document.getElementById('financeChart').classList.remove('hidden');
-    }, 2000);
+    resultsDiv.innerHTML = `<div class='p-3 bg-gray-50 rounded shadow'>
+        <p class='font-semibold'>Total Entries: ${financeData.length}</p>
+        <p class='text-green-600'>Total Amount: $${financeData.reduce((sum, entry) => sum + entry.amount, 0).toFixed(2)}</p>
+    </div>`;
 });
 </script>
 
