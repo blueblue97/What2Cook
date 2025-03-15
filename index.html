@@ -53,6 +53,24 @@
         <button id="calculateDebt" class="w-full bg-blue-500 text-white p-2 rounded primary-blue-hover">Calculate Payoff Time</button>
         <div id="debtResult" class="mt-4"></div>
     </div>
+
+    <!-- Subscription Tracker -->
+    <div id="subscriptionsSection" class="hidden">
+        <h2 class="text-xl font-semibold mb-2">Subscription Tracker</h2>
+        <input type="text" id="subscriptionName" class="w-full border rounded p-2 mb-2" placeholder="Subscription Name">
+        <input type="number" id="subscriptionCost" class="w-full border rounded p-2 mb-2" placeholder="Monthly Cost ($)">
+        <button id="addSubscription" class="w-full bg-blue-500 text-white p-2 rounded primary-blue-hover">Add Subscription</button>
+        <div id="subscriptionList" class="mt-4"></div>
+    </div>
+
+    <!-- Financial Goals -->
+    <div id="goalsSection" class="hidden">
+        <h2 class="text-xl font-semibold mb-2">Financial Goals</h2>
+        <input type="text" id="goalName" class="w-full border rounded p-2 mb-2" placeholder="Goal Description">
+        <input type="number" id="goalAmount" class="w-full border rounded p-2 mb-2" placeholder="Goal Amount ($)">
+        <button id="addGoal" class="w-full bg-blue-500 text-white p-2 rounded primary-blue-hover">Set Goal</button>
+        <div id="goalList" class="mt-4"></div>
+    </div>
 </div>
 
 <script>
@@ -70,44 +88,13 @@ Object.keys(sections).forEach(tabId => {
             document.getElementById(section).classList.add("hidden");
         });
         document.getElementById(sections[tabId]).classList.remove("hidden");
+        
+        // Ensure selected tab has an active underline
+        Object.keys(sections).forEach(t => {
+            document.getElementById(t).classList.remove("border-b-2", "border-blue-500");
+        });
+        document.getElementById(tabId).classList.add("border-b-2", "border-blue-500");
     });
-});
-
-// Budget Calculation
-const calculateBudget = document.getElementById("calculateBudget");
-calculateBudget.addEventListener("click", () => {
-    let income = parseFloat(document.getElementById("income").value) || 0;
-    let expenses = parseFloat(document.getElementById("expenses").value) || 0;
-    let balance = income - expenses;
-    let message = balance >= 0 
-        ? `Your budget is balanced. You have $${balance.toFixed(2)} remaining.`
-        : `Warning: You are overspending by $${Math.abs(balance).toFixed(2)}.`;
-    document.getElementById("budgetResult").innerHTML = `<p class='text-gray-700'>${message}</p>`;
-});
-
-// Savings Tracker
-const calculateSavings = document.getElementById("calculateSavings");
-calculateSavings.addEventListener("click", () => {
-    let goal = parseFloat(document.getElementById("savingsGoal").value) || 0;
-    let saved = parseFloat(document.getElementById("currentSavings").value) || 0;
-    let remaining = goal - saved;
-    let message = remaining > 0
-        ? `You need to save $${remaining.toFixed(2)} more to reach your goal.`
-        : `Congratulations! You have reached your savings goal!`;
-    document.getElementById("savingsResult").innerHTML = `<p class='text-gray-700'>${message}</p>`;
-});
-
-// Debt Payoff Calculation
-const calculateDebt = document.getElementById("calculateDebt");
-calculateDebt.addEventListener("click", () => {
-    let totalDebt = parseFloat(document.getElementById("totalDebt").value) || 0;
-    let monthlyPayment = parseFloat(document.getElementById("monthlyPayment").value) || 0;
-    if (monthlyPayment <= 0) {
-        document.getElementById("debtResult").innerHTML = `<p class='text-red-500'>Enter a valid monthly payment amount.</p>`;
-        return;
-    }
-    let months = Math.ceil(totalDebt / monthlyPayment);
-    document.getElementById("debtResult").innerHTML = `<p class='text-gray-700'>You will be debt-free in ${months} months if you continue your current payment plan.</p>`;
 });
 </script>
 
