@@ -3,110 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinanceHub - Smart Budgeting & Expense Tracking</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .primary-blue { background-color: #1e3a8a; }
-        .primary-blue-hover:hover { background-color: #1e40af; }
-        .hidden { display: none; }
-    </style>
+    <title>Crypto Trader - Secure & Fast Exchange</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
 </head>
-<body class="bg-gray-100 p-6 flex flex-col items-center">
-
-<div class="max-w-2xl bg-white shadow-lg rounded-lg p-6 w-full">
-    <h1 class="text-2xl font-bold text-center mb-4 text-gray-800">FinanceHub</h1>
-    <p class="text-gray-600 text-center mb-4">Manage your finances effectively.</p>
-
-    <!-- Navigation Tabs -->
-    <div class="flex justify-between border-b pb-2 mb-4">
-        <button id="budgetTab" class="font-semibold text-gray-800 border-b-2 border-blue-500 pb-2">Budget Overview</button>
-        <button id="savingsTab" class="font-semibold text-gray-800">Savings Tracker</button>
-        <button id="debtsTab" class="font-semibold text-gray-800">Debt Manager</button>
-        <button id="subscriptionsTab" class="font-semibold text-gray-800">Subscriptions</button>
-        <button id="goalsTab" class="font-semibold text-gray-800">Financial Goals</button>
-    </div>
+<body>
+    <header>
+        <div class="logo">CryptoTrader</div>
+        <nav>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#market">Market</a></li>
+                <li><a href="#signup">Sign Up</a></li>
+            </ul>
+        </nav>
+    </header>
     
-    <!-- Budget Overview -->
-    <div id="budgetSection">
-        <h2 class="text-xl font-semibold mb-2">Budget Overview</h2>
-        <input type="number" id="income" class="w-full border rounded p-2 mb-2" placeholder="Enter your income ($)">
-        <input type="number" id="expenses" class="w-full border rounded p-2 mb-2" placeholder="Enter your total expenses ($)">
-        <button id="calculateBudget" class="w-full bg-blue-500 text-white p-2 rounded primary-blue-hover">Calculate Budget</button>
-        <div id="budgetResult" class="mt-4"></div>
-    </div>
-
-    <!-- Savings Tracker -->
-    <div id="savingsSection" class="hidden">
-        <h2 class="text-xl font-semibold mb-2">Savings Tracker</h2>
-        <input type="number" id="savingsGoal" class="w-full border rounded p-2 mb-2" placeholder="Savings Goal ($)">
-        <input type="number" id="currentSavings" class="w-full border rounded p-2 mb-2" placeholder="Current Savings ($)">
-        <button id="calculateSavings" class="w-full bg-blue-500 text-white p-2 rounded primary-blue-hover">Track Savings</button>
-        <div id="savingsResult" class="mt-4"></div>
-    </div>
-
-    <!-- Debt Manager -->
-    <div id="debtsSection" class="hidden">
-        <h2 class="text-xl font-semibold mb-2">Debt Manager</h2>
-        <input type="number" id="totalDebt" class="w-full border rounded p-2 mb-2" placeholder="Total Debt ($)">
-        <input type="number" id="monthlyPayment" class="w-full border rounded p-2 mb-2" placeholder="Monthly Payment ($)">
-        <button id="calculateDebt" class="w-full bg-blue-500 text-white p-2 rounded primary-blue-hover">Calculate Payoff Time</button>
-        <div id="debtResult" class="mt-4"></div>
-    </div>
-</div>
-
-<script>
-const sections = {
-    budgetTab: "budgetSection",
-    savingsTab: "savingsSection",
-    debtsTab: "debtsSection",
-    subscriptionsTab: "subscriptionsSection",
-    goalsTab: "goalsSection"
-};
-
-Object.keys(sections).forEach(tabId => {
-    document.getElementById(tabId).addEventListener("click", () => {
-        Object.values(sections).forEach(section => {
-            document.getElementById(section).classList.add("hidden");
-        });
-        document.getElementById(sections[tabId]).classList.remove("hidden");
-    });
-});
-
-// Budget Calculation
-const calculateBudget = document.getElementById("calculateBudget");
-calculateBudget.addEventListener("click", () => {
-    let income = parseFloat(document.getElementById("income").value) || 0;
-    let expenses = parseFloat(document.getElementById("expenses").value) || 0;
-    let balance = income - expenses;
-    document.getElementById("budgetResult").innerHTML = balance >= 0 
-        ? `<p class='text-green-600'>You have $${balance.toFixed(2)} remaining.</p>`
-        : `<p class='text-red-600'>You are overspending by $${Math.abs(balance).toFixed(2)}.</p>`;
-});
-
-// Savings Tracker Calculation
-const calculateSavings = document.getElementById("calculateSavings");
-calculateSavings.addEventListener("click", () => {
-    let goal = parseFloat(document.getElementById("savingsGoal").value) || 0;
-    let saved = parseFloat(document.getElementById("currentSavings").value) || 0;
-    let remaining = goal - saved;
-    document.getElementById("savingsResult").innerHTML = remaining > 0
-        ? `<p class='text-blue-600'>You need $${remaining.toFixed(2)} more to reach your goal.</p>`
-        : `<p class='text-green-600'>Goal reached! Great job!</p>`;
-});
-
-// Debt Payoff Calculation
-const calculateDebt = document.getElementById("calculateDebt");
-calculateDebt.addEventListener("click", () => {
-    let totalDebt = parseFloat(document.getElementById("totalDebt").value) || 0;
-    let monthlyPayment = parseFloat(document.getElementById("monthlyPayment").value) || 0;
-    if (monthlyPayment <= 0) {
-        document.getElementById("debtResult").innerHTML = `<p class='text-red-600'>Enter a valid monthly payment.</p>`;
-        return;
-    }
-    let months = Math.ceil(totalDebt / monthlyPayment);
-    document.getElementById("debtResult").innerHTML = `<p class='text-blue-600'>You'll be debt-free in ${months} months!</p>`;
-});
-</script>
-
+    <section class="hero">
+        <h1>Trade Cryptocurrency Securely & Efficiently</h1>
+        <p>Buy, sell, and manage your digital assets with confidence.</p>
+        <a href="#signup" class="cta-button">Get Started</a>
+    </section>
+    
+    <section id="features" class="features">
+        <h2>Why Choose CryptoTrader?</h2>
+        <div class="feature-box">
+            <h3>🔒 Secure Transactions</h3>
+            <p>Advanced encryption & 2FA for maximum security.</p>
+        </div>
+        <div class="feature-box">
+            <h3>⚡ Fast Execution</h3>
+            <p>Trade instantly with low latency execution.</p>
+        </div>
+        <div class="feature-box">
+            <h3>📈 Live Market Data</h3>
+            <p>Stay updated with real-time price tracking.</p>
+        </div>
+    </section>
+    
+    <section id="market" class="market">
+        <h2>Live Market Prices</h2>
+        <table id="crypto-table">
+            <thead>
+                <tr>
+                    <th>Coin</th>
+                    <th>Price (USD)</th>
+                    <th>24h Change</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Bitcoin (BTC)</td>
+                    <td id="btc-price">Loading...</td>
+                    <td id="btc-change">Loading...</td>
+                </tr>
+                <tr>
+                    <td>Ethereum (ETH)</td>
+                    <td id="eth-price">Loading...</td>
+                    <td id="eth-change">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    
+    <section id="signup" class="signup">
+        <h2>Sign Up for Free</h2>
+        <form>
+            <input type="email" placeholder="Enter your email" required>
+            <input type="password" placeholder="Create a password" required>
+            <button type="submit">Join Now</button>
+        </form>
+    </section>
+    
+    <footer>
+        <p>&copy; 2025 CryptoTrader. All rights reserved.</p>
+    </footer>
 </body>
 </html>
