@@ -14,18 +14,7 @@
 
 <div class="max-w-xl bg-white shadow-xl rounded-lg p-6 w-full">
     <h1 class="text-3xl font-bold text-center mb-4 text-gray-800">What2Cook</h1>
-    <p class="mb-4 text-gray-600 text-center">Enter the ingredients you have or upload an image.</p>
-
-    <!-- Image Upload Section -->
-    <label class="block text-gray-700 font-semibold mb-2">Upload an image of your ingredients:</label>
-    <input type="file" id="imageUpload" class="mb-4 border p-2 w-full rounded bg-gray-50">
-    <img id="imagePreview" class="hidden w-full rounded-lg shadow-md mb-4"/>
-
-    <button id="detectIngredients" class="w-full bg-blue-500 text-white p-2 rounded dark-green-hover transition">
-        Detect Ingredients from Image
-    </button>
-
-    <hr class="my-6">
+    <p class="mb-4 text-gray-600 text-center">Enter the ingredients you have:</p>
 
     <!-- Manual Ingredient Entry -->
     <div id="ingredients-container" class="space-y-2">
@@ -70,6 +59,29 @@
     <div id="recipes" class="mt-6 space-y-4"></div>
 </div>
 
+<!-- Tabs Section -->
+<div class="max-w-xl bg-white shadow-xl rounded-lg p-4 mt-6 w-full">
+    <div class="flex justify-between border-b pb-2 mb-4">
+        <button id="savedRecipesTab" class="font-semibold text-gray-800 border-b-2 border-green-500 pb-2">Saved Recipes</button>
+        <button id="imageUploadTab" class="font-semibold text-gray-800">Upload Image</button>
+    </div>
+    
+    <!-- Saved Recipes Section -->
+    <div id="savedRecipesSection">
+        <div id="favoritesList" class="space-y-4"></div>
+    </div>
+
+    <!-- Smart Ingredient Recognition Section -->
+    <div id="imageUploadSection" class="hidden">
+        <label class="block text-gray-700 font-semibold mb-2">Upload an image of your ingredients:</label>
+        <input type="file" id="imageUpload" class="mb-4 border p-2 w-full rounded bg-gray-50">
+        <img id="imagePreview" class="hidden w-full rounded-lg shadow-md mb-4"/>
+        <button id="detectIngredients" class="w-full bg-blue-500 text-white p-2 rounded dark-green-hover transition">
+            Detect Ingredients from Image
+        </button>
+    </div>
+</div>
+
 <script>
 const searchBtn = document.getElementById('searchBtn');
 const detectIngredientsBtn = document.getElementById('detectIngredients');
@@ -79,6 +91,25 @@ const addIngredientBtn = document.getElementById('addIngredient');
 const ingredientsContainer = document.getElementById('ingredients-container');
 const imageUpload = document.getElementById('imageUpload');
 const imagePreview = document.getElementById('imagePreview');
+const savedRecipesTab = document.getElementById('savedRecipesTab');
+const imageUploadTab = document.getElementById('imageUploadTab');
+const savedRecipesSection = document.getElementById('savedRecipesSection');
+const imageUploadSection = document.getElementById('imageUploadSection');
+
+// Tab Switching
+savedRecipesTab.addEventListener('click', () => {
+    savedRecipesSection.classList.remove('hidden');
+    imageUploadSection.classList.add('hidden');
+    savedRecipesTab.classList.add('border-b-2', 'border-green-500');
+    imageUploadTab.classList.remove('border-b-2', 'border-green-500');
+});
+
+imageUploadTab.addEventListener('click', () => {
+    savedRecipesSection.classList.add('hidden');
+    imageUploadSection.classList.remove('hidden');
+    imageUploadTab.classList.add('border-b-2', 'border-green-500');
+    savedRecipesTab.classList.remove('border-b-2', 'border-green-500');
+});
 
 // Image Preview Handler
 imageUpload.addEventListener('change', function () {
@@ -93,27 +124,6 @@ imageUpload.addEventListener('change', function () {
     }
 });
 
-// Simulated AI Ingredient Detection (replace with real API)
-detectIngredientsBtn.addEventListener('click', () => {
-    if (!imageUpload.files.length) {
-        alert("Please upload an image first.");
-        return;
-    }
-
-    alert("Detecting ingredients... (This will be replaced with real AI detection)");
-    
-    setTimeout(() => {
-        const detectedIngredients = ["tomato", "cheese", "basil", "chicken"];  // Simulated results
-        detectedIngredients.forEach(ingredient => {
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.className = 'w-full border rounded p-3 focus:ring-2 focus:ring-green-500';
-            input.value = ingredient;
-            ingredientsContainer.appendChild(input);
-        });
-    }, 2000);
-});
-
 // Add more ingredient input fields
 addIngredientBtn.addEventListener('click', () => {
     const input = document.createElement('input');
@@ -126,7 +136,7 @@ addIngredientBtn.addEventListener('click', () => {
 searchBtn.addEventListener('click', () => {
     const ingredientInputs = document.querySelectorAll('#ingredients-container input');
     const ingredients = Array.from(ingredientInputs).map(input => input.value.trim()).filter(value => value !== '');
-
+    
     if (ingredients.length === 0) {
         alert('Please enter at least one ingredient!');
         return;
