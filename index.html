@@ -13,79 +13,86 @@
 </head>
 <body class="bg-gray-100 p-6 flex flex-col items-center">
 
-<div class="max-w-xl bg-white shadow-lg rounded-lg p-6 w-full">
+<div class="max-w-2xl bg-white shadow-lg rounded-lg p-6 w-full">
     <h1 class="text-2xl font-bold text-center mb-4 text-gray-800">FinanceHub</h1>
-    <p class="text-gray-600 text-center mb-4">Track your income, expenses, and budget effectively.</p>
+    <p class="text-gray-600 text-center mb-4">Manage your finances effectively.</p>
 
-    <!-- Finance Entry Form -->
-    <div id="finance-container" class="space-y-2">
-        <input type="text" class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500" placeholder="Description">
-        <input type="number" class="w-full border rounded p-2 focus:ring-2 focus:ring-blue-500" placeholder="Amount ($)">
+    <!-- Navigation Tabs -->
+    <div class="flex justify-between border-b pb-2 mb-4">
+        <button id="budgetTab" class="font-semibold text-gray-800 border-b-2 border-blue-500 pb-2">Budget Overview</button>
+        <button id="savingsTab" class="font-semibold text-gray-800">Savings Tracker</button>
+        <button id="debtsTab" class="font-semibold text-gray-800">Debt Manager</button>
+        <button id="subscriptionsTab" class="font-semibold text-gray-800">Subscriptions</button>
+        <button id="goalsTab" class="font-semibold text-gray-800">Financial Goals</button>
     </div>
-    <button id="addFinance" class="mt-3 bg-blue-500 text-white p-2 rounded primary-blue-hover w-full">
-        + Add Entry
-    </button>
+    
+    <!-- Budget Overview -->
+    <div id="budgetSection" class="">
+        <h2 class="text-xl font-semibold mb-2">Budget Overview</h2>
+        <p class="text-gray-600 mb-3">Track your monthly income and expenses.</p>
+        <input type="number" id="income" class="w-full border rounded p-2 mb-2" placeholder="Enter your income ($)">
+        <input type="number" id="expenses" class="w-full border rounded p-2 mb-2" placeholder="Enter your total expenses ($)">
+        <button id="calculateBudget" class="w-full bg-blue-500 text-white p-2 rounded primary-blue-hover">Calculate Budget</button>
+        <div id="budgetResult" class="mt-4"></div>
+    </div>
 
-    <!-- Finance Options -->
-    <select id="financeCategory" class="w-full border rounded p-2 mt-4 focus:ring-2 focus:ring-blue-500">
-        <option value="budget">Budget Overview</option>
-        <option value="savings">Savings Tracker</option>
-        <option value="debts">Debt Manager</option>
-        <option value="subscriptions">Subscription Tracker</option>
-        <option value="goals">Financial Goals</option>
-    </select>
+    <!-- Savings Tracker -->
+    <div id="savingsSection" class="hidden">
+        <h2 class="text-xl font-semibold mb-2">Savings Tracker</h2>
+        <p class="text-gray-600 mb-3">Set and track your savings goals.</p>
+        <input type="number" id="savingsGoal" class="w-full border rounded p-2 mb-2" placeholder="Savings Goal ($)">
+        <input type="number" id="currentSavings" class="w-full border rounded p-2 mb-2" placeholder="Current Savings ($)">
+        <button id="calculateSavings" class="w-full bg-blue-500 text-white p-2 rounded primary-blue-hover">Track Savings</button>
+        <div id="savingsResult" class="mt-4"></div>
+    </div>
 
-    <button id="calculateBtn" class="mt-4 w-full text-white p-2 rounded primary-blue primary-blue-hover">
-        Calculate
-    </button>
+    <!-- Debt Manager -->
+    <div id="debtsSection" class="hidden">
+        <h2 class="text-xl font-semibold mb-2">Debt Manager</h2>
+        <p class="text-gray-600 mb-3">Monitor and pay off your debts.</p>
+        <input type="number" id="totalDebt" class="w-full border rounded p-2 mb-2" placeholder="Total Debt ($)">
+        <input type="number" id="monthlyPayment" class="w-full border rounded p-2 mb-2" placeholder="Monthly Payment ($)">
+        <button id="calculateDebt" class="w-full bg-blue-500 text-white p-2 rounded primary-blue-hover">Calculate Payoff Time</button>
+        <div id="debtResult" class="mt-4"></div>
+    </div>
 
-    <div id="results" class="mt-6"></div>
+    <!-- Subscription Tracker -->
+    <div id="subscriptionsSection" class="hidden">
+        <h2 class="text-xl font-semibold mb-2">Subscription Tracker</h2>
+        <p class="text-gray-600 mb-3">Keep track of all your subscriptions.</p>
+        <input type="text" id="subscriptionName" class="w-full border rounded p-2 mb-2" placeholder="Subscription Name">
+        <input type="number" id="subscriptionCost" class="w-full border rounded p-2 mb-2" placeholder="Monthly Cost ($)">
+        <button id="addSubscription" class="w-full bg-blue-500 text-white p-2 rounded primary-blue-hover">Add Subscription</button>
+        <div id="subscriptionList" class="mt-4"></div>
+    </div>
+
+    <!-- Financial Goals -->
+    <div id="goalsSection" class="hidden">
+        <h2 class="text-xl font-semibold mb-2">Financial Goals</h2>
+        <p class="text-gray-600 mb-3">Set short and long-term financial goals.</p>
+        <input type="text" id="goalName" class="w-full border rounded p-2 mb-2" placeholder="Goal Description">
+        <input type="number" id="goalAmount" class="w-full border rounded p-2 mb-2" placeholder="Goal Amount ($)">
+        <button id="addGoal" class="w-full bg-blue-500 text-white p-2 rounded primary-blue-hover">Set Goal</button>
+        <div id="goalList" class="mt-4"></div>
+    </div>
 </div>
 
 <script>
-const addFinanceBtn = document.getElementById('addFinance');
-const financeContainer = document.getElementById('finance-container');
-const calculateBtn = document.getElementById('calculateBtn');
-const resultsDiv = document.getElementById('results');
+const sections = {
+    budgetTab: "budgetSection",
+    savingsTab: "savingsSection",
+    debtsTab: "debtsSection",
+    subscriptionsTab: "subscriptionsSection",
+    goalsTab: "goalsSection"
+};
 
-// Add more finance entry fields
-addFinanceBtn.addEventListener('click', () => {
-    const inputText = document.createElement('input');
-    inputText.type = 'text';
-    inputText.className = 'w-full border rounded p-2 focus:ring-2 focus:ring-blue-500';
-    inputText.placeholder = 'Description';
-
-    const inputNumber = document.createElement('input');
-    inputNumber.type = 'number';
-    inputNumber.className = 'w-full border rounded p-2 focus:ring-2 focus:ring-blue-500';
-    inputNumber.placeholder = 'Amount ($)';
-
-    financeContainer.appendChild(inputText);
-    financeContainer.appendChild(inputNumber);
-});
-
-calculateBtn.addEventListener('click', () => {
-    const financeInputs = document.querySelectorAll('#finance-container input');
-    const financeData = [];
-    
-    for (let i = 0; i < financeInputs.length; i += 2) {
-        if (financeInputs[i].value && financeInputs[i+1].value) {
-            financeData.push({
-                description: financeInputs[i].value.trim(),
-                amount: parseFloat(financeInputs[i+1].value.trim())
-            });
-        }
-    }
-    
-    if (financeData.length === 0) {
-        alert('Please enter at least one financial entry!');
-        return;
-    }
-
-    resultsDiv.innerHTML = `<div class='p-3 bg-gray-50 rounded shadow'>
-        <p class='font-semibold'>Total Entries: ${financeData.length}</p>
-        <p class='text-green-600'>Total Amount: $${financeData.reduce((sum, entry) => sum + entry.amount, 0).toFixed(2)}</p>
-    </div>`;
+Object.keys(sections).forEach(tabId => {
+    document.getElementById(tabId).addEventListener("click", () => {
+        Object.values(sections).forEach(section => {
+            document.getElementById(section).classList.add("hidden");
+        });
+        document.getElementById(sections[tabId]).classList.remove("hidden");
+    });
 });
 </script>
 
