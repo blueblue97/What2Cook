@@ -148,17 +148,8 @@
                     <th>24h Change</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>Bitcoin (BTC)</td>
-                    <td id="btc-price">Loading...</td>
-                    <td id="btc-change">Loading...</td>
-                </tr>
-                <tr>
-                    <td>Ethereum (ETH)</td>
-                    <td id="eth-price">Loading...</td>
-                    <td id="eth-change">Loading...</td>
-                </tr>
+            <tbody id="crypto-data">
+                <!-- JavaScript will populate this section dynamically with 20+ cryptocurrencies -->
             </tbody>
         </table>
     </section>
@@ -175,5 +166,7 @@
     <footer>
         <p>&copy; 2025 CryptoTrader. All rights reserved.</p>
     </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
