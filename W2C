@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What2Cook - Meal Planner</title>
+    <title>What2Cook</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .light-green { background-color: #22a852; } /* Lighter green shade */
+        .light-green { background-color: #22a852; }
         .light-green-hover:hover { background-color: #1b8e46; }
         .header-font { font-family: 'Poppins', sans-serif; }
     </style>
@@ -15,16 +15,69 @@
 
 <div class="max-w-xl bg-white shadow-xl rounded-lg p-6 w-full">
     <h1 class="text-3xl font-bold text-center mb-4 text-gray-800 header-font">What2Cook</h1>
-    <p class="mb-4 text-gray-600 text-center">Plan your meals for the week</p>
+    <p class="mb-4 text-gray-600 text-center">Enter the ingredients you have:</p>
 
-    <!-- Tabs Navigation -->
+    <!-- Manual Ingredient Entry -->
+    <div id="ingredients-container" class="space-y-2">
+        <input type="text" class="w-full border rounded p-3 focus:ring-2 focus:ring-green-500" placeholder="Type an ingredient...">
+    </div>
+    <button id="addIngredient" class="mt-3 bg-blue-500 text-white p-2 rounded light-green-hover transition w-full">
+        + Add Ingredient
+    </button>
+
+    <select id="recipeType" class="w-full border rounded p-3 mt-4 focus:ring-2 focus:ring-green-500">
+        <option value="any">Any Recipe</option>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="vegan">Vegan</option>
+        <option value="gluten-free">Gluten-Free</option>
+        <option value="low-carb">Low Carb</option>
+        <option value="high-protein">High Protein</option>
+        <option value="keto">Keto</option>
+        <option value="paleo">Paleo</option>
+        <option value="mediterranean">Mediterranean</option>
+        <option value="dairy-free">Dairy-Free</option>
+        <option value="nut-free">Nut-Free</option>
+        <option value="quick-meals">Quick Meals</option>
+        <option value="slow-cooked">Slow Cooked</option>
+        <option value="budget-friendly">Budget-Friendly</option>
+        <option value="gourmet">Gourmet</option>
+        <option value="spicy">Spicy</option>
+        <option value="kid-friendly">Kid-Friendly</option>
+        <option value="desserts">Desserts</option>
+        <option value="breakfast">Breakfast</option>
+        <option value="snacks">Snacks</option>
+    </select>
+
+    <button id="searchBtn" class="mt-4 w-full text-white p-3 rounded light-green light-green-hover transition">
+        Find Recipe
+    </button>
+</div>
+
+<!-- Tabs Section -->
+<div class="max-w-xl bg-white shadow-xl rounded-lg p-4 mt-6 w-full">
     <div class="flex justify-between border-b pb-2 mb-4">
         <button id="savedRecipesTab" class="font-semibold text-gray-800 border-b-2 border-green-500 pb-2">Saved Recipes</button>
+        <button id="imageUploadTab" class="font-semibold text-gray-800">Upload Image</button>
         <button id="mealPlannerTab" class="font-semibold text-gray-800">Meal Planner</button>
+    </div>
+    
+    <!-- Saved Recipes Section -->
+    <div id="savedRecipesSection">
+        <div id="favoritesList" class="space-y-4"></div>
+    </div>
+
+    <!-- Smart Ingredient Recognition Section -->
+    <div id="imageUploadSection" class="hidden">
+        <label class="block text-gray-700 font-semibold mb-2">Upload an image of your ingredients:</label>
+        <input type="file" id="imageUpload" class="mb-4 border p-2 w-full rounded bg-gray-50">
+        <img id="imagePreview" class="hidden w-full rounded-lg shadow-md mb-4"/>
+        <button id="detectIngredients" class="w-full bg-blue-500 text-white p-2 rounded light-green-hover transition">
+            Detect Ingredients from Image
+        </button>
     </div>
 
     <!-- Meal Planner Section -->
-    <div id="mealPlannerSection">
+    <div id="mealPlannerSection" class="hidden">
         <label class="block text-gray-700 font-semibold mb-2">Select Days to Plan:</label>
         <select id="daySelect" class="w-full border rounded p-3">
             <option value="monday">Monday</option>
@@ -47,32 +100,46 @@
 <script>
 const mealPlannerTab = document.getElementById('mealPlannerTab');
 const savedRecipesTab = document.getElementById('savedRecipesTab');
+const imageUploadTab = document.getElementById('imageUploadTab');
+const savedRecipesSection = document.getElementById('savedRecipesSection');
+const imageUploadSection = document.getElementById('imageUploadSection');
 const mealPlannerSection = document.getElementById('mealPlannerSection');
 const mealPlanDiv = document.getElementById('mealPlan');
 const generatePlanBtn = document.getElementById('generatePlan');
 const daySelect = document.getElementById('daySelect');
 
-// Sample meal data for AI-generated meal plans
-const mealData = {
-    "monday": ["Oatmeal with berries", "Grilled chicken salad", "Salmon with quinoa"],
-    "tuesday": ["Avocado toast", "Turkey sandwich", "Stir-fried tofu with veggies"],
-    "wednesday": ["Scrambled eggs with toast", "Grilled cheese with tomato soup", "Beef stir-fry"],
-    "thursday": ["Smoothie bowl", "Caesar salad", "Pasta primavera"],
-    "friday": ["Pancakes with honey", "Sushi rolls", "Chicken fajitas"],
-    "saturday": ["French toast", "Quinoa bowl", "BBQ grilled steak"],
-    "sunday": ["Greek yogurt with granola", "Caprese sandwich", "Shrimp tacos"]
-};
+// Tab Switching
+savedRecipesTab.addEventListener('click', () => {
+    savedRecipesSection.classList.remove('hidden');
+    imageUploadSection.classList.add('hidden');
+    mealPlannerSection.classList.add('hidden');
+});
 
-// Generate meal plan based on selected day
+imageUploadTab.addEventListener('click', () => {
+    savedRecipesSection.classList.add('hidden');
+    imageUploadSection.classList.remove('hidden');
+    mealPlannerSection.classList.add('hidden');
+});
+
+mealPlannerTab.addEventListener('click', () => {
+    savedRecipesSection.classList.add('hidden');
+    imageUploadSection.classList.add('hidden');
+    mealPlannerSection.classList.remove('hidden');
+});
+
+// Generate meal plan
 generatePlanBtn.addEventListener('click', () => {
     const selectedDay = daySelect.value;
-    const meals = mealData[selectedDay];
+    const meals = {
+        "monday": ["Oatmeal with berries", "Grilled chicken salad", "Salmon with quinoa"],
+        "tuesday": ["Avocado toast", "Turkey sandwich", "Stir-fried tofu with veggies"]
+    };
     mealPlanDiv.innerHTML = `
-        <h2 class="font-semibold text-lg text-gray-800">Meal Plan for ${selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1)}</h2>
+        <h2 class="font-semibold text-lg text-gray-800">Meal Plan for ${selectedDay}</h2>
         <ul class="list-disc pl-6 text-gray-700">
-            <li><strong>Breakfast:</strong> ${meals[0]}</li>
-            <li><strong>Lunch:</strong> ${meals[1]}</li>
-            <li><strong>Dinner:</strong> ${meals[2]}</li>
+            <li><strong>Breakfast:</strong> ${meals[selectedDay][0]}</li>
+            <li><strong>Lunch:</strong> ${meals[selectedDay][1]}</li>
+            <li><strong>Dinner:</strong> ${meals[selectedDay][2]}</li>
         </ul>
     `;
 });
