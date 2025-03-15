@@ -1,47 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What2Cook</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 p-4">
+<button id="searchBtn" class="mt-4 w-full bg-green-500 text-white p-3 rounded hover:bg-green-600 transition">
+    Find Recipe
+</button>
 
-<div class="max-w-xl mx-auto bg-white shadow-xl rounded-lg p-6">
-    <h1 class="text-2xl font-bold text-center mb-4 text-gray-800">🍽️ What2Cook</h1>
-    <p class="mb-2 text-gray-600 text-center">Enter ingredients you have (comma-separated):</p>
-    
-    <textarea id="ingredients" class="w-full border rounded p-2" rows="3" placeholder="e.g. chicken, pasta, tomatoes"></textarea>
-
-    <button id="searchBtn" class="mt-4 w-full bg-green-500 text-white p-3 rounded hover:bg-green-600 transition">
-        Find Recipe
-    </button>
-
-    <div id="loadingSpinner" class="hidden text-center mt-4">
-        <p class="text-gray-600">Generating your recipe...</p>
-        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500 mx-auto"></div>
-    </div>
-
-    <div id="recipes" class="mt-6 space-y-4"></div>
+<div id="recipes" class="mt-6 space-y-4"></div>
+<div id="favoritesSection" class="mt-6 space-y-4 hidden">
+    <h2 class="text-lg font-semibold">Saved Recipes</h2>
+    <ul id="favoritesList" class="list-disc ml-6"></ul>
 </div>
 
 <script>
 const searchBtn = document.getElementById('searchBtn');
 const recipesDiv = document.getElementById('recipes');
-const loadingSpinner = document.getElementById('loadingSpinner');
+const favoritesSection = document.getElementById('favoritesSection');
+const favoritesList = document.getElementById('favoritesList');
+
+function loadFavorites() {
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    favoritesList.innerHTML = '';
+    favorites.forEach(recipe => {
+        const li = document.createElement('li');
+        li.innerHTML = `<p class="text-gray-600">${recipe}</p>`;
+        favoritesList.appendChild(li);
+    });
+
+    if (favorites.length > 0) {
+        favoritesSection.classList.remove('hidden');
+    }
+}
 
 searchBtn.addEventListener('click', () => {
     const ingredients = document.getElementById('ingredients').value;
-
     if (!ingredients) {
         alert('Please enter at least one ingredient!');
         return;
     }
-
-    // Show loading spinner
-    loadingSpinner.classList.remove("hidden");
-    recipesDiv.innerHTML = '';
 
     fetch('https://what2cook-backend.onrender.com/generate_recipe', {
         method: 'POST',
@@ -50,27 +42,32 @@ searchBtn.addEventListener('click', () => {
     })
     .then(res => res.json())
     .then(data => {
-        // Hide loading spinner
-        loadingSpinner.classList.add("hidden");
-
         if (data.error) {
             recipesDiv.innerHTML = `<p class="text-red-500">${data.error}</p>`;
         } else {
-            recipesDiv.innerHTML = `
+            const recipeHTML = `
                 <div class="p-4 bg-gray-50 rounded shadow">
                     <h3 class="font-semibold text-lg text-gray-800">Your AI-Generated Recipe</h3>
                     <p class="text-gray-600 mt-2">${data.recipe.replace(/\n/g, '<br>')}</p>
+                    <button class="mt-2 bg-blue-500 text-white p-2 rounded" onclick="saveFavorite('${data.recipe.replace(/\n/g, ' ')}')">
+                        Save Recipe
+                    </button>
                 </div>`;
+            recipesDiv.innerHTML = recipeHTML;
         }
     })
     .catch(err => {
-        loadingSpinner.classList.add("hidden");
         recipesDiv.innerHTML = '<p class="text-red-500">Error generating recipe. Try again later.</p>';
         console.error(err);
     });
 });
+
+function saveFavorite(recipe) {
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    favorites.push(recipe);
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    loadFavorites();
+}
+
+window.onload = loadFavorites;
 </script>
-
-</body>
-</html>
-
