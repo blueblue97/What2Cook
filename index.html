@@ -50,13 +50,17 @@
       margin-top: 30px;
     }
     .tool {
-      margin-top: 10px;
+      margin-top: 20px;
     }
     input, button, select {
       padding: 10px;
       margin-top: 10px;
       width: 100%;
       max-width: 400px;
+    }
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -99,17 +103,20 @@
 
       <div class="tool">
         <label>Monthly Budget Planner:</label><br />
-        <input type="number" placeholder="Monthly Income" /><br />
-        <input type="number" placeholder="Total Monthly Expenses" /><br />
-        <button onclick="alert('Budget calculated! (Functionality pending)')">Calculate Surplus</button>
+        <input type="number" id="income" placeholder="Monthly Income" /><br />
+        <input type="number" id="expenses" placeholder="Total Monthly Expenses" /><br />
+        <button onclick="calculateSurplus()">Calculate Surplus</button>
+        <p class="result" id="surplusResult"></p>
       </div>
 
       <div class="tool">
-        <label>Retirement Calculator (Basic):</label><br />
-        <input type="number" placeholder="Current Age" /><br />
-        <input type="number" placeholder="Retirement Age" /><br />
-        <input type="number" placeholder="Monthly Savings" /><br />
-        <button onclick="alert('Projection done! (Functionality pending)')">Project Retirement Savings</button>
+        <label>Retirement Calculator:</label><br />
+        <input type="number" id="currentAge" placeholder="Current Age" /><br />
+        <input type="number" id="retirementAge" placeholder="Retirement Age" /><br />
+        <input type="number" id="monthlySavings" placeholder="Monthly Savings ($)" /><br />
+        <input type="number" id="annualReturn" placeholder="Expected Annual Return (%)" /><br />
+        <button onclick="projectRetirement()">Project Retirement Savings</button>
+        <p class="result" id="retirementResult"></p>
       </div>
     </section>
 
@@ -129,6 +136,41 @@
   <footer>
     <p>&copy; 2025 NestBudget | All rights reserved</p>
   </footer>
+
+  <script>
+    function calculateSurplus() {
+      const income = parseFloat(document.getElementById('income').value);
+      const expenses = parseFloat(document.getElementById('expenses').value);
+      const resultField = document.getElementById('surplusResult');
+
+      if (isNaN(income) || isNaN(expenses)) {
+        resultField.textContent = 'Please enter valid numbers.';
+        return;
+      }
+
+      const surplus = income - expenses;
+      resultField.textContent = `Your monthly surplus is $${surplus.toFixed(2)}.`;
+    }
+
+    function projectRetirement() {
+      const age = parseInt(document.getElementById('currentAge').value);
+      const retire = parseInt(document.getElementById('retirementAge').value);
+      const savings = parseFloat(document.getElementById('monthlySavings').value);
+      const returnRate = parseFloat(document.getElementById('annualReturn').value);
+      const resultField = document.getElementById('retirementResult');
+
+      if (isNaN(age) || isNaN(retire) || isNaN(savings) || isNaN(returnRate) || retire <= age) {
+        resultField.textContent = 'Please enter valid inputs. Retirement age must be greater than current age.';
+        return;
+      }
+
+      const months = (retire - age) * 12;
+      const monthlyReturn = returnRate / 100 / 12;
+      const futureValue = savings * ((Math.pow(1 + monthlyReturn, months) - 1) / monthlyReturn);
+
+      resultField.textContent = `Estimated retirement savings: $${futureValue.toFixed(2)}.`;
+    }
+  </script>
 </body>
 </html>
 
