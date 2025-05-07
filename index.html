@@ -4,63 +4,88 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NestBudget - Smart Finance for All</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
+      font-family: 'Poppins', sans-serif;
+      background: #f0f4f8;
       margin: 0;
       padding: 0;
     }
     header {
-      background-color: #0f3460;
+      background-color: #114e60;
       color: white;
-      padding: 20px;
+      padding: 30px 20px;
       text-align: center;
     }
     nav {
-      background: #16213e;
+      background: #163840;
       display: flex;
       justify-content: center;
       gap: 30px;
-      padding: 10px;
+      padding: 12px;
+      flex-wrap: wrap;
     }
     nav a {
       color: white;
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 500;
     }
     .container {
-      padding: 20px;
-      max-width: 1000px;
+      padding: 30px 20px;
+      max-width: 1200px;
       margin: auto;
     }
     .section {
       background: white;
-      margin-bottom: 20px;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    .section:hover {
+      transform: scale(1.01);
     }
     footer {
-      background: #0f3460;
+      background: #114e60;
       color: white;
       text-align: center;
-      padding: 15px;
-      margin-top: 30px;
-    }
-    .tool {
-      margin-top: 20px;
+      padding: 20px;
+      margin-top: 40px;
     }
     input, button, select {
-      padding: 10px;
+      padding: 12px;
       margin-top: 10px;
+      margin-bottom: 10px;
       width: 100%;
-      max-width: 400px;
+      max-width: 450px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      background-color: #0f79af;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    button:hover {
+      background-color: #0d5e84;
+    }
+    .tool {
+      margin-top: 25px;
     }
     .result {
-      margin-top: 10px;
-      font-weight: bold;
+      margin-top: 12px;
+      font-weight: 500;
+      color: #114e60;
+    }
+    h2 {
+      color: #114e60;
     }
   </style>
 </head>
@@ -79,57 +104,63 @@
   <div class="container">
     <section id="young" class="section">
       <h2>For Young Adults</h2>
-      <p>Get started with budgeting, saving, and investing wisely from day one.</p>
-      <ul>
-        <li>First job budgeting</li>
-        <li>Debt and credit management</li>
-        <li>Intro to investing</li>
-      </ul>
+      <p>Start building smart financial habits from day one. Whether it's budgeting your first paycheck or planning to pay off student debt — we’ve got you covered.</p>
     </section>
 
     <section id="seniors" class="section">
       <h2>For Seniors</h2>
-      <p>Ensure a secure retirement, manage fixed incomes, and protect your wealth.</p>
-      <ul>
-        <li>Social Security optimization</li>
-        <li>Healthcare and Medicare tips</li>
-        <li>Estate planning</li>
-      </ul>
+      <p>Protect your future and make your money last. Learn how to optimize Social Security, plan your estate, and stay financially confident in retirement.</p>
     </section>
 
     <section id="tools" class="section">
       <h2>Finance Tools</h2>
-      <p>Use our free interactive tools to manage your money better.</p>
 
       <div class="tool">
-        <label>Monthly Budget Planner:</label><br />
-        <input type="number" id="income" placeholder="Monthly Income" /><br />
-        <input type="number" id="expenses" placeholder="Total Monthly Expenses" /><br />
+        <h3>Monthly Budget Planner</h3>
+        <input type="number" id="income" placeholder="Monthly Income ($)" />
+        <input type="number" id="expenses" placeholder="Monthly Expenses ($)" />
         <button onclick="calculateSurplus()">Calculate Surplus</button>
         <p class="result" id="surplusResult"></p>
       </div>
 
       <div class="tool">
-        <label>Retirement Calculator:</label><br />
-        <input type="number" id="currentAge" placeholder="Current Age" /><br />
-        <input type="number" id="retirementAge" placeholder="Retirement Age" /><br />
-        <input type="number" id="monthlySavings" placeholder="Monthly Savings ($)" /><br />
-        <input type="number" id="annualReturn" placeholder="Expected Annual Return (%)" /><br />
-        <button onclick="projectRetirement()">Project Retirement Savings</button>
+        <h3>Retirement Savings Calculator</h3>
+        <input type="number" id="currentAge" placeholder="Current Age" />
+        <input type="number" id="retirementAge" placeholder="Desired Retirement Age" />
+        <input type="number" id="monthlySavings" placeholder="Monthly Savings ($)" />
+        <input type="number" id="annualReturn" placeholder="Annual Return (%)" />
+        <button onclick="projectRetirement()">Project Retirement Total</button>
         <p class="result" id="retirementResult"></p>
+      </div>
+
+      <div class="tool">
+        <h3>Net Worth Tracker</h3>
+        <input type="number" id="assets" placeholder="Total Assets ($)" />
+        <input type="number" id="liabilities" placeholder="Total Liabilities ($)" />
+        <button onclick="calculateNetWorth()">Calculate Net Worth</button>
+        <p class="result" id="netWorthResult"></p>
+      </div>
+
+      <div class="tool">
+        <h3>Debt Snowball Estimator</h3>
+        <input type="number" id="debt1" placeholder="Debt #1 ($)" />
+        <input type="number" id="debt2" placeholder="Debt #2 ($)" />
+        <input type="number" id="debt3" placeholder="Debt #3 ($)" />
+        <button onclick="calculateDebtSnowball()">Estimate Payoff Order</button>
+        <p class="result" id="debtSnowballResult"></p>
       </div>
     </section>
 
     <section id="contact" class="section">
       <h2>Contact Us</h2>
-      <p>Schedule a free 15-min financial consultation.</p>
-      <input type="text" placeholder="Your Name" /><br />
-      <input type="email" placeholder="Your Email" /><br />
+      <p>Book a free consultation and start your smart money journey today.</p>
+      <input type="text" placeholder="Your Name" />
+      <input type="email" placeholder="Your Email" />
       <select>
         <option>I'm a Young Adult</option>
         <option>I'm a Senior</option>
-      </select><br />
-      <button>Submit Request</button>
+      </select>
+      <button>Submit</button>
     </section>
   </div>
 
@@ -141,15 +172,13 @@
     function calculateSurplus() {
       const income = parseFloat(document.getElementById('income').value);
       const expenses = parseFloat(document.getElementById('expenses').value);
-      const resultField = document.getElementById('surplusResult');
-
+      const result = document.getElementById('surplusResult');
       if (isNaN(income) || isNaN(expenses)) {
-        resultField.textContent = 'Please enter valid numbers.';
+        result.textContent = 'Enter valid income and expenses.';
         return;
       }
-
       const surplus = income - expenses;
-      resultField.textContent = `Your monthly surplus is $${surplus.toFixed(2)}.`;
+      result.textContent = `Your monthly surplus is $${surplus.toFixed(2)}.`;
     }
 
     function projectRetirement() {
@@ -157,20 +186,47 @@
       const retire = parseInt(document.getElementById('retirementAge').value);
       const savings = parseFloat(document.getElementById('monthlySavings').value);
       const returnRate = parseFloat(document.getElementById('annualReturn').value);
-      const resultField = document.getElementById('retirementResult');
+      const result = document.getElementById('retirementResult');
 
       if (isNaN(age) || isNaN(retire) || isNaN(savings) || isNaN(returnRate) || retire <= age) {
-        resultField.textContent = 'Please enter valid inputs. Retirement age must be greater than current age.';
+        result.textContent = 'Enter valid numbers. Retirement age must be greater than current age.';
         return;
       }
 
       const months = (retire - age) * 12;
       const monthlyReturn = returnRate / 100 / 12;
       const futureValue = savings * ((Math.pow(1 + monthlyReturn, months) - 1) / monthlyReturn);
+      result.textContent = `Estimated savings at retirement: $${futureValue.toFixed(2)}.`;
+    }
 
-      resultField.textContent = `Estimated retirement savings: $${futureValue.toFixed(2)}.`;
+    function calculateNetWorth() {
+      const assets = parseFloat(document.getElementById('assets').value);
+      const liabilities = parseFloat(document.getElementById('liabilities').value);
+      const result = document.getElementById('netWorthResult');
+
+      if (isNaN(assets) || isNaN(liabilities)) {
+        result.textContent = 'Enter both assets and liabilities.';
+        return;
+      }
+
+      const netWorth = assets - liabilities;
+      result.textContent = `Your net worth is $${netWorth.toFixed(2)}.`;
+    }
+
+    function calculateDebtSnowball() {
+      let debts = [
+        parseFloat(document.getElementById('debt1').value),
+        parseFloat(document.getElementById('debt2').value),
+        parseFloat(document.getElementById('debt3').value)
+      ];
+      if (debts.some(isNaN)) {
+        document.getElementById('debtSnowballResult').textContent = 'Please enter all debt values.';
+        return;
+      }
+      const ordered = debts.map((amt, idx) => ({ id: idx + 1, amt })).sort((a, b) => a.amt - b.amt);
+      const orderText = ordered.map(d => `Debt #${d.id}: $${d.amt.toFixed(2)}`).join(' → ');
+      document.getElementById('debtSnowballResult').textContent = `Suggested payoff order: ${orderText}`;
     }
   </script>
 </body>
 </html>
-
