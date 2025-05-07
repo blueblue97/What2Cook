@@ -56,7 +56,7 @@
       padding: 20px;
       margin-top: 40px;
     }
-    input, button, select {
+    input, button, select, textarea {
       padding: 12px;
       margin-top: 10px;
       margin-bottom: 10px;
@@ -149,6 +149,13 @@
         <button onclick="calculateDebtSnowball()">Estimate Payoff Order</button>
         <p class="result" id="debtSnowballResult"></p>
       </div>
+
+      <div class="tool">
+        <h3>AI Budget Advisor (Beta)</h3>
+        <textarea id="aiGoal" placeholder="Describe your financial goal (e.g., I want to save $5,000 in 6 months)"></textarea>
+        <button onclick="mockAIBudgetAdvice()">Get AI Budget Advice</button>
+        <p class="result" id="aiAdviceResult"></p>
+      </div>
     </section>
 
     <section id="contact" class="section">
@@ -226,6 +233,16 @@
       const ordered = debts.map((amt, idx) => ({ id: idx + 1, amt })).sort((a, b) => a.amt - b.amt);
       const orderText = ordered.map(d => `Debt #${d.id}: $${d.amt.toFixed(2)}`).join(' → ');
       document.getElementById('debtSnowballResult').textContent = `Suggested payoff order: ${orderText}`;
+    }
+
+    function mockAIBudgetAdvice() {
+      const input = document.getElementById('aiGoal').value.trim();
+      const result = document.getElementById('aiAdviceResult');
+      if (!input) {
+        result.textContent = 'Please describe your financial goal.';
+        return;
+      }
+      result.textContent = `AI Suggestion: To reach your goal, save 20% of your income monthly, reduce non-essential expenses by 30%, and automate savings into a high-yield account. Adjust based on lifestyle.`;
     }
   </script>
 </body>
