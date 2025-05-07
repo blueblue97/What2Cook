@@ -7,12 +7,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: 'Poppins', sans-serif;
       background: #f0f4f8;
       margin: 0;
       padding: 0;
+      transition: background-color 0.3s, color 0.3s;
     }
     header {
       background-color: #114e60;
@@ -87,12 +89,31 @@
     h2 {
       color: #114e60;
     }
+    canvas {
+      max-width: 100%;
+      margin-top: 20px;
+    }
+    .dark-mode {
+      background-color: #1a1a1a;
+      color: #f5f5f5;
+    }
+    .dark-mode .section {
+      background-color: #2a2a2a;
+      color: #f5f5f5;
+    }
+    .dark-mode nav {
+      background-color: #0f0f0f;
+    }
+    .dark-mode footer {
+      background-color: #0f0f0f;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>NestBudget</h1>
     <p>Smart Financial Tools for the Young and the Wise</p>
+    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
   </header>
   <nav>
     <a href="#young">Young Adults</a>
@@ -102,93 +123,68 @@
   </nav>
 
   <div class="container">
-    <section id="young" class="section">
-      <h2>For Young Adults</h2>
-      <p>Start building smart financial habits from day one. Whether it's budgeting your first paycheck or planning to pay off student debt — we’ve got you covered.</p>
-    </section>
-
-    <section id="seniors" class="section">
-      <h2>For Seniors</h2>
-      <p>Protect your future and make your money last. Learn how to optimize Social Security, plan your estate, and stay financially confident in retirement.</p>
-    </section>
-
     <section id="tools" class="section">
-      <h2>Finance Tools</h2>
+      <h2>📊 Advanced Finance Tools</h2>
 
+      <!-- Expense Tracker -->
       <div class="tool">
-        <h3>Monthly Budget Planner</h3>
-        <input type="number" id="income" placeholder="Monthly Income ($)" />
-        <input type="number" id="expenses" placeholder="Monthly Expenses ($)" />
-        <button onclick="calculateSurplus()">Calculate Surplus</button>
-        <p class="result" id="surplusResult"></p>
+        <h3>Expense Tracker</h3>
+        <input type="text" id="expenseCategory" placeholder="Category (e.g., Food)" />
+        <input type="number" id="expenseAmount" placeholder="Amount ($)" />
+        <button onclick="addExpense()">Add Expense</button>
+        <ul id="expenseList"></ul>
       </div>
 
+      <!-- Loan Repayment Calculator -->
       <div class="tool">
-        <h3>Retirement Savings Calculator</h3>
-        <input type="number" id="currentAge" placeholder="Current Age" />
-        <input type="number" id="retirementAge" placeholder="Desired Retirement Age" />
-        <input type="number" id="monthlySavings" placeholder="Monthly Savings ($)" />
-        <input type="number" id="annualReturn" placeholder="Annual Return (%)" />
-        <button onclick="projectRetirement()">Project Retirement Total</button>
-        <p class="result" id="retirementResult"></p>
+        <h3>Loan Repayment Calculator</h3>
+        <input type="number" id="loanAmount" placeholder="Loan Amount ($)" />
+        <input type="number" id="interestRate" placeholder="Annual Interest Rate (%)" />
+        <input type="number" id="loanTerm" placeholder="Loan Term (Years)" />
+        <button onclick="calculateLoan()">Calculate Loan</button>
+        <p class="result" id="loanResult"></p>
       </div>
 
+      <!-- Emergency Fund Estimator -->
       <div class="tool">
-        <h3>Net Worth Tracker</h3>
-        <input type="number" id="assets" placeholder="Total Assets ($)" />
-        <input type="number" id="liabilities" placeholder="Total Liabilities ($)" />
-        <button onclick="calculateNetWorth()">Calculate Net Worth</button>
-        <p class="result" id="netWorthResult"></p>
-      </div>
-
-      <div class="tool">
-        <h3>Debt Snowball Estimator</h3>
-        <input type="number" id="debt1" placeholder="Debt #1 ($)" />
-        <input type="number" id="debt2" placeholder="Debt #2 ($)" />
-        <input type="number" id="debt3" placeholder="Debt #3 ($)" />
-        <button onclick="calculateDebtSnowball()">Estimate Payoff Order</button>
-        <p class="result" id="debtSnowballResult"></p>
-      </div>
-
-      <div class="tool">
-        <h3>AI Budget Advisor</h3>
-        <textarea id="aiGoal" placeholder="Describe your financial goal (e.g., I want to save $5,000 in 6 months)"></textarea>
-        <button onclick="mockAIBudgetAdvice()">Get AI Budget Advice</button>
-        <p class="result" id="aiAdviceResult"></p>
-      </div>
-
-      <div class="tool">
-        <h3>Financial Health Score (AI)</h3>
-        <input type="number" id="fhIncome" placeholder="Monthly Income ($)" />
-        <input type="number" id="fhDebt" placeholder="Total Debt ($)" />
-        <input type="number" id="fhSavings" placeholder="Total Savings ($)" />
-        <button onclick="calculateHealthScore()">Get Score</button>
-        <p class="result" id="fhScore"></p>
-      </div>
-
-      <div class="tool">
-        <h3>Smart Investment Suggestion</h3>
-        <select id="riskLevel">
-          <option value="low">Low Risk</option>
-          <option value="medium">Medium Risk</option>
-          <option value="high">High Risk</option>
+        <h3>Emergency Fund Estimator</h3>
+        <input type="number" id="monthlyExpense" placeholder="Average Monthly Expenses ($)" />
+        <select id="months">
+          <option value="3">3 Months</option>
+          <option value="6">6 Months</option>
         </select>
-        <input type="number" id="investAge" placeholder="Your Age" />
-        <button onclick="suggestInvestments()">Get Investment Advice</button>
-        <p class="result" id="investmentAdvice"></p>
+        <button onclick="estimateEmergencyFund()">Estimate Fund</button>
+        <p class="result" id="emergencyFundResult"></p>
       </div>
-    </section>
 
-    <section id="contact" class="section">
-      <h2>Contact Us</h2>
-      <p>Book a free consultation and start your smart money journey today.</p>
-      <input type="text" placeholder="Your Name" />
-      <input type="email" placeholder="Your Email" />
-      <select>
-        <option>I'm a Young Adult</option>
-        <option>I'm a Senior</option>
-      </select>
-      <button>Submit</button>
+      <!-- Goal Tracker -->
+      <div class="tool">
+        <h3>Financial Goal Tracker</h3>
+        <input type="number" id="goalTarget" placeholder="Goal Target ($)" />
+        <input type="number" id="goalCurrent" placeholder="Current Savings ($)" />
+        <button onclick="trackGoal()">Track Progress</button>
+        <progress id="goalProgress" value="0" max="100"></progress>
+        <p class="result" id="goalProgressText"></p>
+      </div>
+
+      <!-- AI Financial Personality Quiz -->
+      <div class="tool">
+        <h3>AI Financial Personality Quiz</h3>
+        <select id="personalityQuiz">
+          <option value="spender">I often spend without budgeting</option>
+          <option value="saver">I save before I spend</option>
+          <option value="investor">I invest as much as I can</option>
+          <option value="balanced">I balance spending, saving, and investing</option>
+        </select>
+        <button onclick="analyzePersonality()">Get AI Insight</button>
+        <p class="result" id="personalityResult"></p>
+      </div>
+
+      <!-- Charts -->
+      <div class="tool">
+        <h3>Net Worth Over Time (Example)</h3>
+        <canvas id="netWorthChart" width="400" height="200"></canvas>
+      </div>
     </section>
   </div>
 
@@ -197,100 +193,73 @@
   </footer>
 
   <script>
-    function calculateSurplus() {
-      const income = parseFloat(document.getElementById('income').value);
-      const expenses = parseFloat(document.getElementById('expenses').value);
-      const result = document.getElementById('surplusResult');
-      if (isNaN(income) || isNaN(expenses)) {
-        result.textContent = 'Enter valid income and expenses.';
-        return;
-      }
-      const surplus = income - expenses;
-      result.textContent = `Your monthly surplus is $${surplus.toFixed(2)}.`;
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
     }
 
-    function projectRetirement() {
-      const age = parseInt(document.getElementById('currentAge').value);
-      const retire = parseInt(document.getElementById('retirementAge').value);
-      const savings = parseFloat(document.getElementById('monthlySavings').value);
-      const returnRate = parseFloat(document.getElementById('annualReturn').value);
-      const result = document.getElementById('retirementResult');
-      if (isNaN(age) || isNaN(retire) || isNaN(savings) || isNaN(returnRate) || retire <= age) {
-        result.textContent = 'Enter valid numbers. Retirement age must be greater than current age.';
-        return;
-      }
-      const months = (retire - age) * 12;
-      const monthlyReturn = returnRate / 100 / 12;
-      const futureValue = savings * ((Math.pow(1 + monthlyReturn, months) - 1) / monthlyReturn);
-      result.textContent = `Estimated savings at retirement: $${futureValue.toFixed(2)}.`;
+    const expenseList = [];
+    function addExpense() {
+      const category = document.getElementById("expenseCategory").value;
+      const amount = parseFloat(document.getElementById("expenseAmount").value);
+      if (!category || isNaN(amount)) return;
+      expenseList.push({ category, amount });
+      const el = document.createElement("li");
+      el.textContent = `${category}: $${amount.toFixed(2)}`;
+      document.getElementById("expenseList").appendChild(el);
     }
 
-    function calculateNetWorth() {
-      const assets = parseFloat(document.getElementById('assets').value);
-      const liabilities = parseFloat(document.getElementById('liabilities').value);
-      const result = document.getElementById('netWorthResult');
-      if (isNaN(assets) || isNaN(liabilities)) {
-        result.textContent = 'Enter both assets and liabilities.';
-        return;
-      }
-      const netWorth = assets - liabilities;
-      result.textContent = `Your net worth is $${netWorth.toFixed(2)}.`;
+    function calculateLoan() {
+      const amount = parseFloat(document.getElementById("loanAmount").value);
+      const rate = parseFloat(document.getElementById("interestRate").value) / 100 / 12;
+      const years = parseInt(document.getElementById("loanTerm").value);
+      const n = years * 12;
+      const payment = (amount * rate) / (1 - Math.pow(1 + rate, -n));
+      document.getElementById("loanResult").textContent = isNaN(payment)
+        ? "Invalid input."
+        : `Monthly Payment: $${payment.toFixed(2)}`;
     }
 
-    function calculateDebtSnowball() {
-      let debts = [
-        parseFloat(document.getElementById('debt1').value),
-        parseFloat(document.getElementById('debt2').value),
-        parseFloat(document.getElementById('debt3').value)
-      ];
-      if (debts.some(isNaN)) {
-        document.getElementById('debtSnowballResult').textContent = 'Please enter all debt values.';
-        return;
-      }
-      const ordered = debts.map((amt, idx) => ({ id: idx + 1, amt })).sort((a, b) => a.amt - b.amt);
-      const orderText = ordered.map(d => `Debt #${d.id}: $${d.amt.toFixed(2)}`).join(' → ');
-      document.getElementById('debtSnowballResult').textContent = `Suggested payoff order: ${orderText}`;
+    function estimateEmergencyFund() {
+      const expense = parseFloat(document.getElementById("monthlyExpense").value);
+      const months = parseInt(document.getElementById("months").value);
+      const total = expense * months;
+      document.getElementById("emergencyFundResult").textContent = isNaN(total)
+        ? "Enter valid monthly expenses."
+        : `You should aim to save $${total.toFixed(2)} for emergencies.`;
     }
 
-    function mockAIBudgetAdvice() {
-      const input = document.getElementById('aiGoal').value.trim();
-      const result = document.getElementById('aiAdviceResult');
-      if (!input) {
-        result.textContent = 'Please describe your financial goal.';
-        return;
-      }
-      result.textContent = `AI Suggestion: Save 20% of income monthly, reduce non-essentials, automate savings to a high-yield account. Stay disciplined and reassess goals monthly.`;
+    function trackGoal() {
+      const target = parseFloat(document.getElementById("goalTarget").value);
+      const current = parseFloat(document.getElementById("goalCurrent").value);
+      const percent = Math.min(100, (current / target) * 100);
+      document.getElementById("goalProgress").value = percent;
+      document.getElementById("goalProgressText").textContent = `Progress: ${percent.toFixed(0)}%`;
     }
 
-    function calculateHealthScore() {
-      const income = parseFloat(document.getElementById('fhIncome').value);
-      const debt = parseFloat(document.getElementById('fhDebt').value);
-      const savings = parseFloat(document.getElementById('fhSavings').value);
-      const result = document.getElementById('fhScore');
-      if (isNaN(income) || isNaN(debt) || isNaN(savings) || income <= 0) {
-        result.textContent = 'Please enter all valid values.';
-        return;
+    function analyzePersonality() {
+      const choice = document.getElementById("personalityQuiz").value;
+      let msg = '';
+      switch (choice) {
+        case "spender": msg = "You enjoy spending — consider budgeting tools to stay balanced."; break;
+        case "saver": msg = "Great job saving! Consider low-risk investing to grow your money."; break;
+        case "investor": msg = "You're growth-oriented. Review your risk exposure regularly."; break;
+        case "balanced": msg = "Excellent balance. Stay consistent and review goals quarterly."; break;
       }
-      const savingsRatio = savings / income;
-      const debtRatio = debt / income;
-      const score = Math.max(0, Math.min(100, (savingsRatio * 50 - debtRatio * 30 + 50)));
-      result.textContent = `Your estimated financial health score is ${score.toFixed(0)} out of 100.`;
+      document.getElementById("personalityResult").textContent = msg;
     }
 
-    function suggestInvestments() {
-      const risk = document.getElementById('riskLevel').value;
-      const age = parseInt(document.getElementById('investAge').value);
-      const result = document.getElementById('investmentAdvice');
-      if (isNaN(age) || age <= 0) {
-        result.textContent = 'Please enter a valid age.';
-        return;
+    new Chart(document.getElementById("netWorthChart"), {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        datasets: [{
+          label: 'Net Worth',
+          data: [1000, 1500, 2000, 2700, 3200],
+          borderColor: '#0f79af',
+          fill: false
+        }]
       }
-      let advice = '';
-      if (risk === 'low') advice = 'Consider bonds, index funds, and CDs.';
-      else if (risk === 'medium') advice = 'Look into ETFs, dividend stocks, and balanced mutual funds.';
-      else advice = 'Explore growth stocks, REITs, and tech-oriented ETFs.';
-      result.textContent = `At age ${age}, ${advice}`;
-    }
+    });
   </script>
 </body>
 </html>
