@@ -5,32 +5,101 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SkAI Inc - Personal Memory Assistant</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f5f6fa; padding: 20px; }
-    h1 { color: #273c75; }
-    form { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    input, textarea { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; }
-    button { background: #273c75; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
-    .entry { background: #dcdde1; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ffffff;
+      color: #1a237e;
+      padding: 40px;
+    }
+    h1, h2, label, button, input, textarea {
+      text-transform: uppercase;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #1a237e;
+      font-size: 32px;
+    }
+    form {
+      max-width: 700px;
+      margin: 0 auto 40px auto;
+      background: #e3f2fd;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 2px solid #90caf9;
+      border-radius: 8px;
+      background-color: #ffffff;
+      font-size: 14px;
+    }
+    button {
+      background-color: #1a237e;
+      color: #ffffff;
+      padding: 12px 25px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0d1b5e;
+    }
+    #entries {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .entry {
+      background: #e3f2fd;
+      padding: 20px;
+      border-left: 5px solid #1a237e;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .entry strong {
+      font-size: 16px;
+    }
+    .entry small {
+      display: block;
+      margin-top: 10px;
+      color: #546e7a;
+      font-size: 12px;
+    }
   </style>
 </head>
 <body>
   <h1>SkAI Memory Vault</h1>
 
   <form id="memoryForm">
-    <label>User ID</label>
+    <label for="user_id">User ID</label>
     <input type="text" id="user_id" required />
-    <label>Type</label>
-    <input type="text" id="type" placeholder="note, task, idea..." required />
-    <label>Tags</label>
-    <input type="text" id="tags" placeholder="comma,separated,tags" />
-    <label>Title</label>
+    <label for="type">Type</label>
+    <input type="text" id="type" placeholder="NOTE, TASK, IDEA..." required />
+    <label for="tags">Tags</label>
+    <input type="text" id="tags" placeholder="COMMA,SEPARATED,TAGS" />
+    <label for="title">Title</label>
     <input type="text" id="title" required />
-    <label>Content</label>
+    <label for="content">Content</label>
     <textarea id="content" rows="4" required></textarea>
     <button type="submit">Save Memory</button>
   </form>
 
-  <h2>Stored Memories</h2>
+  <h2 style="text-align:center; color:#1a237e; margin-bottom:20px;">Stored Memories</h2>
   <div id="entries"></div>
 
   <script>
@@ -48,27 +117,37 @@
         content: document.getElementById('content').value,
       };
 
-      const res = await fetch('http://127.0.0.1:8000/memory', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(memory),
-      });
+      try {
+        const res = await fetch('http://127.0.0.1:8000/memory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(memory),
+        });
 
-      const data = await res.json();
-      alert(data.message);
-      fetchMemories(memory.user_id);
+        if (!res.ok) throw new Error('Failed to save');
+
+        const data = await res.json();
+        alert(data.message);
+        fetchMemories(memory.user_id);
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
     });
 
     async function fetchMemories(userId) {
-      const res = await fetch(`http://127.0.0.1:8000/memory/${userId}`);
-      const memories = await res.json();
-      entriesDiv.innerHTML = '';
-      memories.forEach(mem => {
-        const div = document.createElement('div');
-        div.className = 'entry';
-        div.innerHTML = `<strong>${mem.title}</strong><br/>Type: ${mem.type} | Tags: ${mem.tags}<br/>${mem.content}<br/><small>${mem.date}</small>`;
-        entriesDiv.appendChild(div);
-      });
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/memory/${userId}`);
+        const memories = await res.json();
+        entriesDiv.innerHTML = '';
+        memories.forEach(mem => {
+          const div = document.createElement('div');
+          div.className = 'entry';
+          div.innerHTML = `<strong>${mem.title}</strong><br/>TYPE: ${mem.type} | TAGS: ${mem.tags}<br/>${mem.content}<small>${mem.date}</small>`;
+          entriesDiv.appendChild(div);
+        });
+      } catch (error) {
+        entriesDiv.innerHTML = '<p style="color: red;">Failed to load memories.</p>';
+      }
     }
   </script>
 </body>
