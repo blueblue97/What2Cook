@@ -3,258 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NestBudget - All-in-One Finance Toolkit</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>SkAI Inc - Personal Memory Assistant</title>
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #f0f4f8;
-      margin: 0;
-      padding: 0;
-      transition: background 0.3s, color 0.3s;
-    }
-    header {
-      background-color: #114e60;
-      color: white;
-      padding: 30px;
-      text-align: center;
-    }
-    nav {
-      background: #163840;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 12px;
-      gap: 30px;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .container {
-      padding: 30px;
-      max-width: 1200px;
-      margin: auto;
-    }
-    .section {
-      background: white;
-      padding: 25px;
-      margin-bottom: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-    input, button, select, textarea {
-      width: 100%;
-      max-width: 450px;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-    }
-    button {
-      background: #0f79af;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0d5e84;
-    }
-    .result {
-      font-weight: 500;
-      margin-top: 10px;
-      color: #114e60;
-    }
-    canvas {
-      margin-top: 20px;
-      max-width: 100%;
-    }
-    .dark-mode {
-      background-color: #1a1a1a;
-      color: #f0f0f0;
-    }
-    .dark-mode .section {
-      background: #2a2a2a;
-      color: #f0f0f0;
-    }
-    .dark-mode nav, .dark-mode footer {
-      background: #000;
-    }
-    footer {
-      background: #114e60;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
+    body { font-family: Arial, sans-serif; background: #f5f6fa; padding: 20px; }
+    h1 { color: #273c75; }
+    form { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    input, textarea { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; }
+    button { background: #273c75; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+    .entry { background: #dcdde1; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>NestBudget</h1>
-    <p>Everything you need to master your finances</p>
-    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
-  </header>
+  <h1>SkAI Memory Vault</h1>
 
-  <nav>
-    <a href="#tools">Tools</a>
-    <a href="#contact">Contact</a>
-  </nav>
+  <form id="memoryForm">
+    <label>User ID</label>
+    <input type="text" id="user_id" required />
+    <label>Type</label>
+    <input type="text" id="type" placeholder="note, task, idea..." required />
+    <label>Tags</label>
+    <input type="text" id="tags" placeholder="comma,separated,tags" />
+    <label>Title</label>
+    <input type="text" id="title" required />
+    <label>Content</label>
+    <textarea id="content" rows="4" required></textarea>
+    <button type="submit">Save Memory</button>
+  </form>
 
-  <div class="container">
-    <section id="tools" class="section">
-      <h2>📊 Financial Tools</h2>
-
-      <!-- Budget Surplus -->
-      <h3>Budget Surplus</h3>
-      <input id="income" placeholder="Income" type="number">
-      <input id="expenses" placeholder="Expenses" type="number">
-      <button onclick="calcBudget()">Calculate</button>
-      <p class="result" id="surplus"></p>
-
-      <!-- Retirement Calculator -->
-      <h3>Retirement Savings</h3>
-      <input id="age" placeholder="Current Age" type="number">
-      <input id="retireAge" placeholder="Retirement Age" type="number">
-      <input id="monthlySave" placeholder="Monthly Savings" type="number">
-      <input id="annualReturn" placeholder="Annual Return %" type="number">
-      <button onclick="calcRetirement()">Estimate</button>
-      <p class="result" id="retireResult"></p>
-
-      <!-- Net Worth -->
-      <h3>Net Worth</h3>
-      <input id="assets" placeholder="Total Assets" type="number">
-      <input id="liabilities" placeholder="Total Liabilities" type="number">
-      <button onclick="calcNetWorth()">Calculate</button>
-      <p class="result" id="netWorth"></p>
-
-      <!-- AI Budget Advisor -->
-      <h3>AI Budget Advisor</h3>
-      <textarea id="goal" placeholder="Describe your financial goal"></textarea>
-      <button onclick="mockAI()">Get Advice</button>
-      <p class="result" id="aiAdvice"></p>
-
-      <!-- Financial Health Score -->
-      <h3>Financial Health Score</h3>
-      <input id="fhIncome" placeholder="Monthly Income" type="number">
-      <input id="fhDebt" placeholder="Total Debt" type="number">
-      <input id="fhSavings" placeholder="Total Savings" type="number">
-      <button onclick="calcScore()">Score Me</button>
-      <p class="result" id="score"></p>
-
-      <!-- Investment Suggestion -->
-      <h3>Investment Suggestion</h3>
-      <select id="risk">
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-      </select>
-      <input id="ageInvest" placeholder="Your Age" type="number">
-      <button onclick="suggestInvest()">Suggest</button>
-      <p class="result" id="investAdvice"></p>
-
-      <!-- Loan Calculator -->
-      <h3>Loan Calculator</h3>
-      <input id="loanAmount" placeholder="Loan Amount" type="number">
-      <input id="interestRate" placeholder="Annual Interest %" type="number">
-      <input id="loanYears" placeholder="Term in Years" type="number">
-      <button onclick="calcLoan()">Calculate</button>
-      <p class="result" id="loanResult"></p>
-
-      <!-- Goal Tracker -->
-      <h3>Goal Tracker</h3>
-      <input id="goalAmount" placeholder="Goal Amount" type="number">
-      <input id="savedSoFar" placeholder="Current Savings" type="number">
-      <button onclick="trackGoal()">Track</button>
-      <progress id="goalProgress" value="0" max="100"></progress>
-      <p class="result" id="goalDisplay"></p>
-
-      <!-- Chart -->
-      <h3>Net Worth Chart</h3>
-      <canvas id="netChart"></canvas>
-    </section>
-
-    <section id="contact" class="section">
-      <h2>📞 Contact</h2>
-      <p>Email us at support@nestbudget.com</p>
-    </section>
-  </div>
-
-  <footer>
-    <p>&copy; 2025 NestBudget. All rights reserved.</p>
-  </footer>
+  <h2>Stored Memories</h2>
+  <div id="entries"></div>
 
   <script>
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark-mode');
-    }
-    function calcBudget() {
-      const i = parseFloat(document.getElementById('income').value);
-      const e = parseFloat(document.getElementById('expenses').value);
-      document.getElementById('surplus').innerText = `Surplus: $${(i - e).toFixed(2)}`;
-    }
-    function calcRetirement() {
-      const age = +document.getElementById('age').value;
-      const rAge = +document.getElementById('retireAge').value;
-      const m = +document.getElementById('monthlySave').value;
-      const r = +document.getElementById('annualReturn').value / 100 / 12;
-      const months = (rAge - age) * 12;
-      const fv = m * ((Math.pow(1 + r, months) - 1) / r);
-      document.getElementById('retireResult').innerText = `Estimated Savings: $${fv.toFixed(2)}`;
-    }
-    function calcNetWorth() {
-      const a = +document.getElementById('assets').value;
-      const l = +document.getElementById('liabilities').value;
-      document.getElementById('netWorth').innerText = `Net Worth: $${(a - l).toFixed(2)}`;
-    }
-    function mockAI() {
-      const g = document.getElementById('goal').value.trim();
-      if (!g) return;
-      document.getElementById('aiAdvice').innerText = `Save 20%, cut non-essentials, automate savings. Stay consistent.`;
-    }
-    function calcScore() {
-      const i = +document.getElementById('fhIncome').value;
-      const d = +document.getElementById('fhDebt').value;
-      const s = +document.getElementById('fhSavings').value;
-      const score = Math.max(0, Math.min(100, (s / i * 50 - d / i * 30 + 50)));
-      document.getElementById('score').innerText = `Score: ${score.toFixed(0)}/100`;
-    }
-    function suggestInvest() {
-      const r = document.getElementById('risk').value;
-      const a = +document.getElementById('ageInvest').value;
-      const text = r === 'low' ? 'CDs & Bonds' : r === 'medium' ? 'ETFs & Blue-Chip Stocks' : 'Growth & Crypto';
-      document.getElementById('investAdvice').innerText = `At ${a}, consider: ${text}`;
-    }
-    function calcLoan() {
-      const P = +document.getElementById('loanAmount').value;
-      const r = +document.getElementById('interestRate').value / 100 / 12;
-      const n = +document.getElementById('loanYears').value * 12;
-      const M = (P * r) / (1 - Math.pow(1 + r, -n));
-      document.getElementById('loanResult').innerText = `Monthly: $${M.toFixed(2)}`;
-    }
-    function trackGoal() {
-      const t = +document.getElementById('goalAmount').value;
-      const c = +document.getElementById('savedSoFar').value;
-      const p = Math.min(100, (c / t) * 100);
-      document.getElementById('goalProgress').value = p;
-      document.getElementById('goalDisplay').innerText = `Progress: ${p.toFixed(0)}%`;
-    }
-    new Chart(document.getElementById('netChart'), {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-        datasets: [{
-          label: 'Net Worth',
-          data: [1000, 1500, 2000, 2500, 3000],
-          borderColor: '#0f79af',
-          fill: false
-        }]
-      }
+    const form = document.getElementById('memoryForm');
+    const entriesDiv = document.getElementById('entries');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const memory = {
+        user_id: document.getElementById('user_id').value,
+        type: document.getElementById('type').value,
+        tags: document.getElementById('tags').value,
+        title: document.getElementById('title').value,
+        content: document.getElementById('content').value,
+      };
+
+      const res = await fetch('http://127.0.0.1:8000/memory', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(memory),
+      });
+
+      const data = await res.json();
+      alert(data.message);
+      fetchMemories(memory.user_id);
     });
+
+    async function fetchMemories(userId) {
+      const res = await fetch(`http://127.0.0.1:8000/memory/${userId}`);
+      const memories = await res.json();
+      entriesDiv.innerHTML = '';
+      memories.forEach(mem => {
+        const div = document.createElement('div');
+        div.className = 'entry';
+        div.innerHTML = `<strong>${mem.title}</strong><br/>Type: ${mem.type} | Tags: ${mem.tags}<br/>${mem.content}<br/><small>${mem.date}</small>`;
+        entriesDiv.appendChild(div);
+      });
+    }
   </script>
 </body>
 </html>
